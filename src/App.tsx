@@ -1,9 +1,8 @@
 import React from 'react';
+import { DependencyGraph } from './components/DependencyGraph';
 
-const App: React.FC = () => {
-  return (
-    <div>Initial</div>
-  );
-};
-
-export default App;
+export const App = () => (
+    <div>
+        <DependencyGraph />
+    </div>
+);
