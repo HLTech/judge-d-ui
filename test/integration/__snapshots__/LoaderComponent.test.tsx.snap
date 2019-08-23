@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoaderComponent should render without error 1`] = `
+<div
+  class="css-1wqnxc1"
+  data-test="loader"
+>
+  <div
+    class="ui large active centered inline loader"
+  />
+</div>
+`;
