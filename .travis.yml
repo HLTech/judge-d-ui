@@ -1,0 +1,32 @@
+language: node_js
+node_js:
+    - 10
+jobs:
+    include:
+        - stage: Install dependencies
+          script: yarn install
+        - stage: Build project
+          script:
+              - yarn build
+              - ls .
+              - pwd
+        #        - stage: Tests
+        #          script: yarn test
+        - stage: build & publish docker image for server
+          #      if: branch = master
+          script:
+              - yarn build
+              - echo "Building docker image"
+              - ls .
+              - docker build -t judge-d-ui .
+              - echo "Pushing to docker registry"
+              - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+              - docker push hltech/judge-d-ui
+              - echo "Pushing to heroku"
+              - docker login -u _ -p "$HEROKU_API_KEY" registry.heroku.com
+              - docker tag hltech/judge-d-ui registry.heroku.com/judge-d-ui/web
+              - docker push registry.heroku.com/judge-d-ui/web
+        - stage: release app in heroku
+          #      if: branch = master
+          script:
+              - heroku container:release web -a judge-d-ui
