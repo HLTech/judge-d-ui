@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { css } from 'emotion';
 import { LoaderComponent } from './LoaderComponent';
 import { DependencyNode, Environment, Network, Service } from './types';
-import { createNetworkFromServices, filterConnectedNodes } from '../helpers/MappingHelpers';
+import { createNetworkFromServices, filterConnectedNodes } from '../utils/helpers/MappingHelpers';
 import { EnvironmentSelect } from './EnvironmentSelect';
 import { CheckboxProps, Radio } from 'semantic-ui-react';
 import { Graph } from './Graph';

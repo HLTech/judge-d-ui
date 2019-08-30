@@ -14,6 +14,8 @@ export interface Network {
 export interface DependencyNode extends SimulationNodeDatum {
     name: string;
     version: string;
+    isProvider: boolean;
+    isConsumer: boolean;
 }
 
 export interface DependencyLink extends SimulationLinkDatum<DependencyNode> {

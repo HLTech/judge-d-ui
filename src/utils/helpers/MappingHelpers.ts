@@ -1,5 +1,5 @@
-import { DependencyLink, DependencyNode, Network, Service } from '../components/types';
-import { ServiceDto } from '../api/api.types';
+import { DependencyLink, DependencyNode, Network, Service } from '../../components/types';
+import { ServiceDto } from '../../api/api.types';
 
 export function mapServiceDtoToService(serviceDto: ServiceDto): Service {
     const service: Service = {
@@ -60,10 +60,12 @@ export function createLinks(nodes: DependencyNode[], services: Service[]): Depen
     }, []);
 }
 
-export function createNetworkFromServices(services: Service[]) {
+export function createNetworkFromServices(services: Service[]): Network {
     const nodes = services.map((service: Service) => ({
         name: service.name,
         version: service.version,
+        isProvider: Object.keys(service.capabilities).length > 0,
+        isConsumer: Object.keys(service.expectations).length > 0,
     }));
     return {
         nodes,
