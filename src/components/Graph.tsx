@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRef } from 'react';
 import { css } from 'emotion';
 import { useEffect } from 'react';
-import { draw } from '../helpers/Graph/Draw';
+import { draw } from '../utils/Draw';
 import * as d3 from 'd3';
 import { DependencyLink, DependencyNode } from './types';
 

@@ -13,7 +13,7 @@ describe('EnvironmentSelect', () => {
         const mockedProps = generateProps();
         const { getByTestId } = render(<EnvironmentSelect {...mockedProps} />);
         const environmentSelect = getByTestId('environment-select') as HTMLDivElement;
-        expect(environmentSelect.children[0].textContent).toBe(Environment.DEMO);
+        expect(environmentSelect.children[0].textContent).toBe(mockedProps.env);
 
         const optionUAT = within(environmentSelect).getByText(Environment.UAT);
         fireEvent.click(optionUAT);

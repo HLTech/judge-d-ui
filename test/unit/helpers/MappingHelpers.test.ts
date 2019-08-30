@@ -1,4 +1,4 @@
-import { mapServiceDtoToService } from '../../../src/helpers/MappingHelpers';
+import { mapServiceDtoToService } from '../../../src/utils/helpers/MappingHelpers';
 import { ExpectationsDto, ServiceCommunicationDto, ServiceDto } from '../../../src/api/api.types';
 
 describe('mapServiceDtoToService', () => {

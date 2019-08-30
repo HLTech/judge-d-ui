@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { Environment } from '../components/types';
-import { mapServiceDtoToService } from '../helpers/MappingHelpers';
+import { mapServiceDtoToService } from '../utils/helpers/MappingHelpers';
 import { EnvironmentStateDto, ServiceDto } from './api.types';
 import { config } from './config';
 
