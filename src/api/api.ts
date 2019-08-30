@@ -2,8 +2,9 @@ import axios, { AxiosResponse } from 'axios';
 import { Environment } from '../components/types';
 import { mapServiceDtoToService } from '../helpers/MappingHelpers';
 import { EnvironmentStateDto, ServiceDto } from './api.types';
+import { config } from './config';
 
-const baseURL = 'https://judge-d.herokuapp.com';
+const baseURL = config.get('BASE_PATH');
 const axiosWithBaseUrl = axios.create({ baseURL });
 
 export function getEnvironmentServicesRequest(env: Environment) {

@@ -13,7 +13,7 @@ describe('EnvironmentSelect', () => {
         const mockedProps = generateProps();
         const { getByTestId } = render(<EnvironmentSelect {...mockedProps} />);
         const environmentSelect = getByTestId('environment-select') as HTMLDivElement;
-        expect(environmentSelect.children[0].textContent).toBe(Environment.SIT);
+        expect(environmentSelect.children[0].textContent).toBe(Environment.TEST);
 
         const optionUAT = within(environmentSelect).getByText(Environment.UAT);
         fireEvent.click(optionUAT);
@@ -24,7 +24,7 @@ describe('EnvironmentSelect', () => {
 
 function generateProps(props?: EnvironmentSelectProps): EnvironmentSelectProps {
     return {
-        env: Environment.SIT,
+        env: Environment.TEST,
         disabled: false,
         onEnvironmentChange: jest.fn(),
         ...props,

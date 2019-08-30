@@ -1,6 +1,7 @@
 import { SimulationLinkDatum, SimulationNodeDatum } from 'd3-force';
 
 export enum Environment {
+    TEST = 'TEST',
     SIT = 'SIT',
     UAT = 'UAT',
 }
