@@ -1,0 +1,16 @@
+{
+  "capabilities": {
+    "jms": {
+	  "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"5Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	  "mimeType": "application-json"
+	}
+  },
+  "expectations": {
+    "service-4": {
+      "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"4Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }  
+	}
+  }
+}

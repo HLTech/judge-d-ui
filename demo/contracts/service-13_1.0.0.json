@@ -1,0 +1,9 @@
+{
+  "capabilities": {
+    "jms": {
+	  "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"13Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	  "mimeType": "application-json"
+	}
+  },
+  "expectations": {}
+}

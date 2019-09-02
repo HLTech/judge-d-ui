@@ -1,0 +1,16 @@
+{
+  "capabilities": {
+    "jms": {
+	  "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"4Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	  "mimeType": "application-json"
+	}
+  },
+  "expectations": {
+    "service-3": {
+	  "rest": {
+	    "value": "{\"provider\":{\"name\":\"judge-d-server\"},\"consumer\":{\"name\":\"judge-d-agent\"},\"interactions\":[{\"description\":\"publish request; 200 response\",\"request\":{\"method\":\"PUT\",\"path\":\"environments/x9s6qeA2P7\",\"headers\":{},\"query\":\"\",\"body\":[{\"name\":\"E_g0vvAAz_\",\"version\":\"OLhGWFSTfa\"}]},\"response\":{\"status\":\"200\",\"headers\":{}}}],\"metadata\":{\"pactSpecificationVersion\":\"1.0.0\"}}",
+	    "mimeType": "application-json"
+	  }  
+	}
+  }
+}

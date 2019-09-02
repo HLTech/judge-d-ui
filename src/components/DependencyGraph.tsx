@@ -13,7 +13,7 @@ export const DependencyGraph: React.FC = () => {
     const [nodes, setNodes] = useState<DependencyNode[]>([]);
     const [isPending, setIsPending] = useState<boolean>(true);
     const [services, setServices] = useState<Service[]>([]);
-    const [env, setEnv] = useState<Environment>(Environment.TEST);
+    const [env, setEnv] = useState<Environment>(Environment.DEMO);
     const [showOnlyConnectedNodes, setShowOnlyConnectedNodes] = useState<boolean | undefined>(false);
 
     const graphNetwork: Network = useMemo(() => createNetworkFromServices(services), [services]);

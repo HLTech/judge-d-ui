@@ -1,0 +1,53 @@
+{
+  "capabilities": {},
+  "expectations": {
+    "service-3": {
+	  "rest": {
+	    "value": "{\"provider\":{\"name\":\"judge-d-server\"},\"consumer\":{\"name\":\"judge-d-agent\"},\"interactions\":[{\"description\":\"publish request; 200 response\",\"request\":{\"method\":\"PUT\",\"path\":\"environments/x9s6qeA2P7\",\"headers\":{},\"query\":\"\",\"body\":[{\"name\":\"E_g0vvAAz_\",\"version\":\"OLhGWFSTfa\"}]},\"response\":{\"status\":\"200\",\"headers\":{}}}],\"metadata\":{\"pactSpecificationVersion\":\"1.0.0\"}}",
+	    "mimeType": "application-json"
+	  }  
+	},
+    "service-9": {
+      "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"9Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }
+	},
+    "service-10": {
+      "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"10Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }
+	},
+    "service-11": {
+      "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"11Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }
+	},
+    "service-12": {
+      "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"12Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }
+	},
+    "service-13": {
+      "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"13Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }
+	},
+    "service-14": {
+      "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"14Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }
+	},
+    "service-15": {
+      "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"15Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }
+	}
+  }
+}
