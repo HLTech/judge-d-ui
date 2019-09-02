@@ -1,0 +1,22 @@
+{
+  "capabilities": {
+    "jms": {
+	  "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"7Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	  "mimeType": "application-json"
+	}  
+  },
+  "expectations": {
+    "service-6": {
+      "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"6Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }
+	},
+    "service-1": {
+	  "jms": {
+	    "value": "[{\"destinationType\":\"QUEUE\",\"destinationName\":\"queue1\",\"message\":{\"type\":\"object\",\"id\":\"RequestMessage\",\"properties\":{\"1Name\":{\"type\":\"string\",\"required\":false}}}}]",
+	    "mimeType": "application-json"
+	  }  
+	}	  
+  }
+}
