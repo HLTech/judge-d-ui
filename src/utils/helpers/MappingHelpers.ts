@@ -39,7 +39,7 @@ export function mapServiceDtoToService(serviceDto: ServiceDto): Service {
 }
 
 export function createLinks(nodes: DependencyNode[], services: Service[]): DependencyLink[] {
-    return services.reduce((links: DependencyLink[], service: Service) => {
+    const mappedLinks = services.reduce((links: DependencyLink[], service: Service) => {
         const linksWithTypes: DependencyLink[] = [];
         const providerNames = Object.keys(service.expectations);
         const serviceSourceNode = nodes.find((node: DependencyNode) => compareNodes(node, service));
@@ -63,6 +63,19 @@ export function createLinks(nodes: DependencyNode[], services: Service[]): Depen
 
         return [...links, ...linksWithTypes];
     }, []);
+
+    mappedLinks.forEach((link: DependencyLink) => {
+        const target = nodes.find(node => compareNodes(node, link.target));
+        const source = nodes.find(node => compareNodes(node, link.source));
+        if (target) {
+            link.source.links.push(target);
+        }
+        if (source) {
+            link.target.links.push(source);
+        }
+    });
+
+    return mappedLinks;
 }
 
 export function createNetworkFromServices(services: Service[]): Network {
@@ -85,4 +98,8 @@ export function filterConnectedNodes(network: Network) {
         (node: DependencyNode) =>
             network.links.findIndex((link: DependencyLink) => compareNodes(link.source, node) || compareNodes(link.target, node)) >= 0
     );
+}
+
+function compareNodes(node1: DependencyNode, node2: DependencyNode) {
+    return node1.name === node2.name && node1.version === node2.version;
 }
