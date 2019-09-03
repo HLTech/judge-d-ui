@@ -41,13 +41,19 @@ export const DependencyGraph: React.FC = () => {
 
     return (
         <div className={containerCls}>
-            <Radio
-                onChange={(e: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => setShowOnlyConnectedNodes(data.checked)}
-                toggle
-                checked={showOnlyConnectedNodes}
-            />
+            {process.env.NODE_ENV === 'development' && (
+                <>
+                    <Radio
+                        onChange={(e: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => setShowOnlyConnectedNodes(data.checked)}
+                        toggle
+                        checked={showOnlyConnectedNodes}
+                    />
 
-            <EnvironmentSelect disabled={isPending} env={env} onEnvironmentChange={setEnv} />
+                    <EnvironmentSelect disabled={isPending} env={env} onEnvironmentChange={setEnv} />
+
+                    <input type="range" step="1" min="1" id="dependencyLevelInput" defaultValue="1" />
+                </>
+            )}
 
             {isPending && <LoaderComponent />}
 

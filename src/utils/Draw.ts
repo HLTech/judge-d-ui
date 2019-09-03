@@ -1,70 +1,59 @@
-import { DependencyLink, DependencyNode, Network } from '../components/types';
+import { DependencyNode, Network } from '../components/types';
+import { handleDrag, highlight, zoomToHighLightedNodes, setResetViewHandler, LevelStorage } from './helpers/GraphHelpers';
+import { event } from 'd3-selection';
 import {
+    createLabels,
+    createLinkElements,
+    createLinkPath,
+    createMarkers,
     createSimulation,
     createSVGContainer,
+    createTextElements,
     createZoom,
-    generateLabelPath,
-    generateMarkers,
-    generateLinkPath,
-    handleDrag,
-} from './helpers/GraphHelpers';
+    setKeyboardDependencyHighlightHandler,
+} from './helpers/DrawHelpers';
 
 export const draw = (network: Network, container: HTMLDivElement) => {
     const { nodes, links } = network;
-
-    const width = container.clientWidth + 500;
-    const height = container.clientHeight + 500;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
 
     const simulation = createSimulation(nodes, links, width, height);
     const svgContainer = createSVGContainer(container, width, height);
-
     const zoomLayer = createZoom(svgContainer);
 
-    generateMarkers(svgContainer);
+    setResetViewHandler();
 
-    const linkElements = zoomLayer
-        .append('g')
-        .attr('id', 'links')
-        .selectAll<Element, DependencyLink>('line.link')
-        .data(links)
-        .enter()
-        .append<Element>('svg:path')
-        .attr('class', 'link')
-        .attr('marker-end', 'url(#provider)')
-        .style('stroke-width', 1)
-        .attr('stroke-opacity', 0.12);
+    createMarkers(svgContainer);
 
-    const labelNodes = zoomLayer.append('g').attr('id', 'labels');
+    const labelNodesGroup = zoomLayer.append('g').attr('id', 'labels');
+    const linkElements = createLinkElements(zoomLayer, links);
 
-    labelNodes
-        .selectAll<Element, DependencyNode>('g#labels')
-        .data(nodes)
-        .enter()
-        .append<SVGGElement>('g')
-        .call(handleDrag(simulation))
-        .append('text')
-        .attr('fill', '#5E6063')
-        .attr('cursor', 'default')
-        .text(d => d.name);
+    createTextElements(labelNodesGroup, nodes);
+    createLabels(labelNodesGroup, nodes);
 
-    labelNodes
-        .selectAll('g')
-        .data(nodes)
-        .append<SVGPathElement>('svg:path')
-        .attr('class', 'label')
-        .attr('fill', '#dcdee0')
-        .attr('d', generateLabelPath);
+    labelNodesGroup
+        .selectAll<SVGGElement, DependencyNode>('g')
+        .on('dblclick', (node: DependencyNode) => {
+            LevelStorage.reset();
+            highlight(node, linkElements);
+            zoomToHighLightedNodes();
+            event.stopPropagation();
+        })
+        .call(handleDrag(simulation));
+
+    setKeyboardDependencyHighlightHandler();
 
     simulation.on('tick', () => {
-        linkElements.each(generateLinkPath);
+        linkElements.each(createLinkPath);
 
-        labelNodes
+        labelNodesGroup
             .selectAll('text')
             .data(nodes)
             .attr('x', (node: DependencyNode) => (node.x ? node.x : null))
             .attr('y', (node: DependencyNode) => (node.y ? node.y : null));
 
-        labelNodes
+        labelNodesGroup
             .selectAll<Element, DependencyNode>('path')
             .attr('transform', (node: DependencyNode) =>
                 node.x && node.y ? 'translate(' + (node.x - 30) + ',' + (node.y - 55) + ')' : null
