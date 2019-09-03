@@ -16,6 +16,10 @@ export interface DependencyNode extends SimulationNodeDatum {
     version: string;
     isProvider: boolean;
     isConsumer: boolean;
+    width?: number;
+    height?: number;
+    links: Array<DependencyNode>;
+    level: number;
 }
 
 export interface DependencyLink extends SimulationLinkDatum<DependencyNode> {
