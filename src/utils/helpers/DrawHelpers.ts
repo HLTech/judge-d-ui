@@ -11,8 +11,8 @@ import {
 } from './GraphHelpers';
 import { DependencyLink, DependencyNode } from '../../components/types';
 import { forceCenter, forceCollide, forceLink, forceSimulation, forceY } from 'd3-force';
-import { event, select, Selection } from 'd3-selection';
-import { zoom } from 'd3-zoom';
+import { event, select, Selection, selectAll } from 'd3-selection';
+import { zoom, zoomIdentity } from 'd3-zoom';
 
 export function createLinkElements(zoomLayer: NodeSelection<SVGGElement>, links: DependencyLink[]) {
     return zoomLayer
@@ -105,9 +105,10 @@ export function createZoom(svgContainer: NodeSelection<SVGSVGElement>): Selectio
                 .scaleExtent([1 / 2, 12])
                 .on('zoom', zoomed)
         )
+        .call(zoom().transform as any, zoomIdentity.scale(0.75))
         .on('dblclick.zoom', null);
 
-    return zoomLayer;
+    return zoomLayer.attr('transform', 'scale(0.75)');
 }
 
 export function createLinkPath(this: Element, link: DependencyLink): void {
@@ -184,8 +185,9 @@ export function createLabelPath(this: Node, node: DependencyNode) {
 export function setKeyboardDependencyHighlightHandler() {
     select('body').on('keydown', () => {
         const labelNodesGroup = select<SVGGElement, DependencyNode>('g#labels');
-        LevelStorage.setMaxLevel(findMaxDependencyLevel(labelNodesGroup));
+        const links = selectAll<SVGGElement, DependencyLink>('.link');
 
+        LevelStorage.setMaxLevel(findMaxDependencyLevel(labelNodesGroup));
         if (!isFinite(LevelStorage.getMaxLevel())) {
             return;
         }
@@ -197,6 +199,17 @@ export function setKeyboardDependencyHighlightHandler() {
         if (LevelStorage.isAboveMin() && event.code === 'NumpadSubtract') {
             LevelStorage.decrease();
         }
+
+        links
+            .filter((link: DependencyLink) => link.source.level > 0 || link.target.level > 0)
+            .transition()
+            .duration(750)
+            .style('opacity', function(this: SVGGElement, link: DependencyLink) {
+                if (link.target.level - 1 <= LevelStorage.getLevel() && link.source.level - 1 <= LevelStorage.getLevel()) {
+                    return 1;
+                }
+                return 0.2;
+            });
 
         labelNodesGroup
             .selectAll<HTMLElement, DependencyNode>('g')
@@ -211,13 +224,26 @@ export function setKeyboardDependencyHighlightHandler() {
 
                 let labelColor = LabelColors.DEFAULT;
                 let textColor = TextColors.DEFAULT;
+                let opacity = '0.2';
+                let elementClass: string | null = null;
                 if (node.level - 1 <= LevelStorage.getLevel()) {
                     labelColor = getHighLightedLabelColor(node);
                     textColor = TextColors.HIGHLIGHTED;
+                    opacity = '1';
+                    elementClass = 'highlighted';
                 }
 
-                select<Element, DependencyNode>(labelElement).attr('fill', labelColor);
-                select<Element, DependencyNode>(textElement).style('fill', textColor);
+                select<Element, DependencyNode>(labelElement)
+                    .attr('class', () => elementClass)
+                    .transition()
+                    .duration(750)
+                    .attr('fill', labelColor)
+                    .style('opacity', opacity);;
+                select<Element, DependencyNode>(textElement)
+                    .transition()
+                    .duration(750)
+                    .style('fill', textColor)
+                    .style('opacity', opacity);
             });
 
         zoomToHighLightedNodes();

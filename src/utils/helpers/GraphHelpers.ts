@@ -1,5 +1,5 @@
 import { DependencyLink, DependencyNode } from '../../components/types';
-import { select, Selection, event, BaseType } from 'd3-selection';
+import { select, Selection, event, BaseType, selectAll } from 'd3-selection';
 import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
@@ -60,6 +60,15 @@ export function highlight(clickedNode: DependencyNode, links: LinkSelection) {
         return;
     }
 
+    links
+        .transition()
+        .duration(750)
+        .style('opacity', function(this: SVGGElement, link: DependencyLink) {
+            const areNodesDirectlyConnected =
+                areNodesConnected(clickedNode, link.source, linksData) && areNodesConnected(clickedNode, link.target, linksData);
+            return areNodesDirectlyConnected ? 1 : 0.2;
+        });
+
     labelNodes.each(function(this: SVGGElement, node: DependencyNode) {
         const areNodesDirectlyConnected = areNodesConnected(clickedNode, node, linksData);
         const labelElement = this.firstElementChild;
@@ -70,23 +79,45 @@ export function highlight(clickedNode: DependencyNode, links: LinkSelection) {
         }
 
         if (areNodesDirectlyConnected) {
-            select<Element, DependencyNode>(labelElement).attr('fill', getHighLightedLabelColor);
-            select<Element, DependencyNode>(textElement).style('fill', TextColors.HIGHLIGHTED);
+            select<Element, DependencyNode>(labelElement)
+                .attr('class', 'highlighted')
+                .transition()
+                .duration(750)
+                .attr('fill', getHighLightedLabelColor)
+                .style('opacity', 1);
+            select<Element, DependencyNode>(textElement)
+                .transition()
+                .duration(750)
+                .style('fill', TextColors.HIGHLIGHTED)
+                .style('opacity', 1);;
         } else {
-            select<Element, DependencyNode>(labelElement).attr('fill', LabelColors.DEFAULT);
-            select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
+            select<Element, DependencyNode>(labelElement)
+                .attr('class', null)
+                .transition()
+                .duration(750)
+                .attr('fill', LabelColors.DEFAULT)
+                .style('opacity', 0.2);
+            select<Element, DependencyNode>(textElement)
+                .transition()
+                .duration(750)
+                .style('fill', TextColors.DEFAULT)
+                .style('opacity', 0.2);
         }
     });
 }
 
 export function selectHighLightedNodes() {
     return selectAllNodes().filter(function(this: SVGGElement) {
-        return this.firstElementChild ? this.firstElementChild.getAttribute('fill') !== LabelColors.DEFAULT : false;
+        return this.firstElementChild ? this.firstElementChild.getAttribute('class') === 'highlighted' : false;
     });
 }
 
 export function selectAllNodes() {
     return select('#labels').selectAll<SVGGElement, DependencyNode>('g');
+}
+
+export function selectAllLinks() {
+    return selectAll<SVGGElement, DependencyLink>('.link');
 }
 
 export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale?: number) {
@@ -271,21 +302,33 @@ export function setResetViewHandler() {
     svgContainer.on('click', () => {
         const highlightedNodes = selectHighLightedNodes();
         if (highlightedNodes.data().length) {
-            selectAllNodes().each((node: DependencyNode) => (node.level = 0));
+        selectAllLinks()
+            .transition()
+            .duration(750)
+            .style('opacity', 1);
 
             const dimension = findGroupBackgroundDimension(highlightedNodes.data());
 
-            highlightedNodes.each(function(this: SVGGElement) {
-                const labelElement = this.firstElementChild;
-                const textElement = this.lastElementChild;
+        selectAllNodes().each(function(this: SVGGElement, node: DependencyNode) {
+            node.level = 0;
+            const labelElement = this.firstElementChild;
+            const textElement = this.lastElementChild;
 
                 if (!labelElement || !textElement) {
                     return;
                 }
 
-                select<Element, DependencyNode>(labelElement).attr('fill', LabelColors.DEFAULT);
-                select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
-            });
+            select<Element, DependencyNode>(labelElement)
+                .transition()
+                .duration(750)
+                .attr('fill', LabelColors.DEFAULT)
+                .style('opacity', 1);
+            select<Element, DependencyNode>(textElement)
+                .transition()
+                .duration(750)
+                .style('fill', TextColors.DEFAULT)
+                .style('opacity', 1);
+        });
 
             centerScreenToDimension(dimension, 1);
         }
