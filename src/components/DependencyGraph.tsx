@@ -31,6 +31,8 @@ export const DependencyGraph: React.FC = () => {
             });
     }, [env]);
 
+    const handleViewSwitchChange = (e: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => setShowOnlyConnectedNodes(data.checked);
+
     useEffect(() => {
         if (showOnlyConnectedNodes) {
             setNodes(onlyNodesWithContracts);
@@ -43,11 +45,7 @@ export const DependencyGraph: React.FC = () => {
         <div className={containerCls}>
             {process.env.NODE_ENV === 'development' && (
                 <>
-                    <Radio
-                        onChange={(e: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => setShowOnlyConnectedNodes(data.checked)}
-                        toggle
-                        checked={showOnlyConnectedNodes}
-                    />
+                    <Radio onChange={handleViewSwitchChange} toggle checked={showOnlyConnectedNodes} />
 
                     <EnvironmentSelect disabled={isPending} env={env} onEnvironmentChange={setEnv} />
 
