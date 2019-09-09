@@ -134,7 +134,7 @@ export function setDependencyLevelOnEachNode(clickedNode: DependencyNode, nodes:
         currentNode.links.forEach((node: DependencyNode) => {
             if (!containsNode(visitedNodes, node) && !containsNode(nodesToVisit, node)) {
                 node.level = currentNode.level + 1;
-                nodesToVisit.push({ ...node, level: currentNode.level + 1 });
+                nodesToVisit.push(node);
             }
         });
 
@@ -145,7 +145,14 @@ export function setDependencyLevelOnEachNode(clickedNode: DependencyNode, nodes:
 }
 
 function containsNode(arr: DependencyNode[], node: DependencyNode) {
-    return arr.findIndex((el: DependencyNode) => Boolean(el.name === node.name && el.version === node.version)) > -1;
+    return arr.findIndex((el: DependencyNode) => compareNodes(el, node)) > -1;
+}
+
+export function compareNodes<T extends { name: string; version: string }, K extends { name: string; version: string }>(
+    node1: T,
+    node2: K
+): Boolean {
+    return node1.name === node2.name && node1.version === node2.version;
 }
 
 export function areNodesConnected(a: DependencyNode, b: DependencyNode, links: DependencyLink[]) {
@@ -298,11 +305,11 @@ export class LevelStorage {
         this.level = this.level - 1;
     }
 
-    public static isMax() {
+    public static isBelowMax() {
         return this.level < this.maxLevel;
     }
 
-    static isMin() {
+    static isAboveMin() {
         return this.level > 1;
     }
 

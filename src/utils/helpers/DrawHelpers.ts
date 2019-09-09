@@ -63,7 +63,7 @@ export function createMarkers(svgContainer: NodeSelection<SVGSVGElement>): void 
         .attr('orient', 'auto')
         .append('svg:path')
         .attr('d', 'M0,-5L20,0L0,5,q10 -5,0 -10')
-        .attr('fill', '#E5E5E6');
+        .attr('fill', '#dcdee0');
 }
 
 export function createSimulation(nodes: DependencyNode[], links: DependencyLink[], width: number, height: number) {
@@ -190,11 +190,11 @@ export function setKeyboardDependencyHighlightHandler() {
             return;
         }
 
-        if (LevelStorage.isMax() && event.code === 'NumpadAdd') {
+        if (LevelStorage.isBelowMax() && event.code === 'NumpadAdd') {
             LevelStorage.increase();
         }
 
-        if (LevelStorage.isMin() && event.code === 'NumpadSubtract') {
+        if (LevelStorage.isAboveMin() && event.code === 'NumpadSubtract') {
             LevelStorage.decrease();
         }
 
