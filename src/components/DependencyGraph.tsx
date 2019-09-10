@@ -7,6 +7,7 @@ import { EnvironmentSelect } from './EnvironmentSelect';
 import { CheckboxProps, Radio } from 'semantic-ui-react';
 import { Graph } from './Graph';
 import { getEnvironmentServicesRequest } from '../api/api';
+import 'semantic-ui-css/semantic.css';
 
 export const DependencyGraph: React.FC = () => {
     const [nodes, setNodes] = useState<DependencyNode[]>([]);

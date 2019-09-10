@@ -2,7 +2,7 @@
 
 exports[`LoaderComponent should render without error 1`] = `
 <div
-  class="css-1wqnxc1"
+  class="css-1qa4t9r"
   data-test="loader"
 >
   <div
