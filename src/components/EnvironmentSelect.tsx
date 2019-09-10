@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Dropdown, DropdownProps } from 'semantic-ui-react';
 import { Environment } from './types';
-import 'semantic-ui-css/semantic.css';
 import { css } from 'emotion';
 
 export interface EnvironmentSelectProps {
