@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { css } from 'emotion';
 import { LoaderComponent } from './LoaderComponent';
 import { DependencyNode, Environment, Network, Service } from './types';
 import { createNetworkFromServices, filterConnectedNodes } from '../utils/helpers/MappingHelpers';
@@ -42,7 +41,7 @@ export const DependencyGraph: React.FC = () => {
     }, [showOnlyConnectedNodes, onlyNodesWithContracts, graphNetwork]);
 
     return (
-        <div className={containerCls}>
+        <>
             {process.env.NODE_ENV === 'development' && (
                 <>
                     <Radio onChange={handleViewSwitchChange} toggle checked={showOnlyConnectedNodes} />
@@ -56,10 +55,6 @@ export const DependencyGraph: React.FC = () => {
             {isPending && <LoaderComponent />}
 
             <Graph nodes={nodes} links={graphNetwork.links} />
-        </div>
+        </>
     );
 };
-
-const containerCls = css({
-    padding: 20,
-});
