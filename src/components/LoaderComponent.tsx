@@ -12,10 +12,11 @@ export const LoaderComponent: React.FC = () => {
 
 const loaderCls = css({
     position: 'fixed',
-    top: 0,
+    top: 75,
     height: '100vh',
     width: '100vw',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-evenly',
+    overflow: 'hidden',
 });

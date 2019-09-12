@@ -1,23 +1,30 @@
 import * as React from 'react';
 import { Dropdown, DropdownProps } from 'semantic-ui-react';
-import { Environment } from './types';
 import { css } from 'emotion';
+import { useMemo } from 'react';
 
 export interface EnvironmentSelectProps {
-    env: Environment;
+    env: string;
     disabled: boolean;
+    options: string[];
 
-    onEnvironmentChange(type: Environment): void;
+    onEnvironmentChange(env: string): void;
 }
 
-const dropdownEnvironments = Object.values(Environment).map((type: string) => ({
-    text: type,
-    value: type,
-}));
+export const EnvironmentSelect: React.FC<EnvironmentSelectProps> = ({ env, options, disabled, onEnvironmentChange }) => {
+    const dropdownOptions = useMemo(
+        () =>
+            options.map((type: string) => ({
+                text: type,
+                value: type,
+            })),
+        [options]
+    );
 
-export const EnvironmentSelect: React.FC<EnvironmentSelectProps> = ({ env, disabled, onEnvironmentChange }) => {
     const handleEnvironmentChange = (event: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
-        onEnvironmentChange(data.value as Environment);
+        if (data.value) {
+            onEnvironmentChange(data.value as string);
+        }
     };
 
     return (
@@ -30,7 +37,7 @@ export const EnvironmentSelect: React.FC<EnvironmentSelectProps> = ({ env, disab
                 fluid={true}
                 multiple={false}
                 selection={true}
-                options={dropdownEnvironments}
+                options={dropdownOptions}
                 onChange={handleEnvironmentChange}
                 value={env}
                 disabled={disabled}
@@ -40,11 +47,11 @@ export const EnvironmentSelect: React.FC<EnvironmentSelectProps> = ({ env, disab
 };
 
 const dropdownContainerCls = css({
-    minWidth: 200,
+    minWidth: 100,
+    width: 200,
 });
 
 const dropdownCls = css({
     minWidth: 100,
-    width: '100%',
     display: 'inline-block',
 });

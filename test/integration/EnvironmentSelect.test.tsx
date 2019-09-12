@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { EnvironmentSelect, EnvironmentSelectProps } from '../../src/components/EnvironmentSelect';
-import { Environment } from '../../src/components/types';
 import { render, fireEvent, within } from '@testing-library/react';
 
 describe('EnvironmentSelect', () => {
@@ -15,18 +14,20 @@ describe('EnvironmentSelect', () => {
         const environmentSelect = getByTestId('environment-select') as HTMLDivElement;
         expect(environmentSelect.children[0].textContent).toBe(mockedProps.env);
 
-        const optionUAT = within(environmentSelect).getByText(Environment.UAT);
-        fireEvent.click(optionUAT);
+        const selectedEnvironment = mockedProps.options[1];
+        const selectedOption = within(environmentSelect).getByText(selectedEnvironment);
+        fireEvent.click(selectedOption);
 
-        expect(mockedProps.onEnvironmentChange).toHaveBeenCalledWith(Environment.UAT);
+        expect(mockedProps.onEnvironmentChange).toHaveBeenCalledWith(selectedEnvironment);
     });
 });
 
 function generateProps(props?: EnvironmentSelectProps): EnvironmentSelectProps {
     return {
-        env: Environment.DEMO,
+        env: 'DEMO',
         disabled: false,
         onEnvironmentChange: jest.fn(),
+        options: ['DEMO', 'SIT', 'UAT'],
         ...props,
     };
 }
