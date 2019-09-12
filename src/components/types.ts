@@ -1,11 +1,5 @@
 import { SimulationLinkDatum, SimulationNodeDatum } from 'd3-force';
 
-export enum Environment {
-    DEMO = 'DEMO',
-    SIT = 'SIT',
-    UAT = 'UAT',
-}
-
 export interface Network {
     nodes: DependencyNode[];
     links: DependencyLink[];
