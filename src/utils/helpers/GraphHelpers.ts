@@ -89,7 +89,7 @@ export function selectAllNodes() {
     return select('#labels').selectAll<SVGGElement, DependencyNode>('g');
 }
 
-function centerScreenForDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale: number = 1) {
+export function centerScreenForDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale: number = 1) {
     if (dimension) {
         const svgContainer = select('#container');
 

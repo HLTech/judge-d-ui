@@ -1,5 +1,5 @@
 import { DependencyNode, Network } from '../components/types';
-import { handleDrag, highlight, zoomToHighLightedNodes, setResetViewHandler, LevelStorage } from './helpers/GraphHelpers';
+import { handleDrag, highlight, LevelStorage, setResetViewHandler, zoomToHighLightedNodes } from './helpers/GraphHelpers';
 import { event } from 'd3-selection';
 import {
     createLabels,
@@ -36,8 +36,10 @@ export const draw = (network: Network, container: HTMLDivElement) => {
         .selectAll<SVGGElement, DependencyNode>('g')
         .on('dblclick', (node: DependencyNode) => {
             LevelStorage.reset();
-            highlight(node, linkElements);
-            zoomToHighLightedNodes();
+            if (node.links.length) {
+                highlight(node, linkElements);
+                zoomToHighLightedNodes();
+            }
             event.stopPropagation();
         })
         .call(handleDrag(simulation));
