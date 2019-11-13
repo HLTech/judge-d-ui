@@ -89,31 +89,41 @@ export function selectAllNodes() {
     return select('#labels').selectAll<SVGGElement, DependencyNode>('g');
 }
 
+function centerScreenForDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale: number = 1) {
+    if (dimension) {
+        const svgContainer = select('#container');
+
+        const width = Number(svgContainer.attr('width'));
+        const height = Number(svgContainer.attr('height'));
+
+        svgContainer
+            .transition()
+            .duration(750)
+            .call(
+                zoom<any, any>().on('zoom', zoomed).transform,
+                zoomIdentity
+                    .translate(width / 2, height / 2)
+                    .scale(scale)
+                    .translate(-dimension.x - dimension.width / 2, -dimension.y - dimension.height / 2)
+            );
+    }
+}
+
 export function zoomToHighLightedNodes() {
     const highlightedNodes = selectHighLightedNodes();
-    const svgContainer = select('#container');
     const svgContainerNode = select<SVGSVGElement, DependencyNode>('#container').node();
-    const dim = findGroupBackgroundDimension(highlightedNodes.data());
+    const dimension = findGroupBackgroundDimension(highlightedNodes.data());
 
-    if (!svgContainerNode || !dim) {
+    if (!svgContainerNode || !dimension) {
         return;
     }
 
     const width = Number(svgContainerNode.getAttribute('width'));
     const height = Number(svgContainerNode.getAttribute('height'));
 
-    const scaleValue = Math.min(8, 0.9 / Math.max(dim.width / width, dim.height / height));
+    const scaleValue = Math.min(1.3, 0.9 / Math.max(dimension.width / width, dimension.height / height));
 
-    svgContainer
-        .transition()
-        .duration(750)
-        .call(
-            zoom<any, any>().on('zoom', zoomed).transform,
-            zoomIdentity
-                .translate(width / 2, height / 2)
-                .scale(scaleValue)
-                .translate(-dim.x - dim.width / 2, -dim.y - dim.height / 2)
-        );
+    centerScreenForDimension(dimension, scaleValue);
 }
 
 export function setDependencyLevelOnEachNode(clickedNode: DependencyNode, nodes: DependencyNode[]): DependencyNode[] {
@@ -266,26 +276,27 @@ export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
 export function setResetViewHandler() {
     LevelStorage.reset();
     const svgContainer = select('#container');
-    const zoomLayer = select('#zoom');
     svgContainer.on('dblclick', () => {
-        selectAllNodes().each((node: DependencyNode) => (node.level = 0));
+        const highlightedNodes = selectHighLightedNodes();
+        if (highlightedNodes.data().length) {
+            selectAllNodes().each((node: DependencyNode) => (node.level = 0));
 
-        selectHighLightedNodes().each(function(this: SVGGElement) {
-            const labelElement = this.firstElementChild;
-            const textElement = this.lastElementChild;
+            const dimension = findGroupBackgroundDimension(highlightedNodes.data());
 
-            if (!labelElement || !textElement) {
-                return;
-            }
+            highlightedNodes.each(function(this: SVGGElement) {
+                const labelElement = this.firstElementChild;
+                const textElement = this.lastElementChild;
 
-            select<Element, DependencyNode>(labelElement).attr('fill', LabelColors.DEFAULT);
-            select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
-        });
+                if (!labelElement || !textElement) {
+                    return;
+                }
 
-        svgContainer
-            .transition()
-            .duration(750)
-            .call(zoom<any, any>().on('zoom', () => zoomLayer.attr('transform', event.transform)).transform, zoomIdentity);
+                select<Element, DependencyNode>(labelElement).attr('fill', LabelColors.DEFAULT);
+                select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
+            });
+
+            centerScreenForDimension(dimension);
+        }
     });
 }
 
