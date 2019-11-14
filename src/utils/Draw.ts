@@ -34,7 +34,7 @@ export const draw = (network: Network, container: HTMLDivElement) => {
 
     labelNodesGroup
         .selectAll<SVGGElement, DependencyNode>('g')
-        .on('dblclick', (node: DependencyNode) => {
+        .on('click', (node: DependencyNode) => {
             LevelStorage.reset();
             if (node.links.length) {
                 highlight(node, linkElements);
