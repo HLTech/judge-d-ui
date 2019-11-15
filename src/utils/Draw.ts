@@ -2,6 +2,7 @@ import { DependencyNode, Network } from '../components/types';
 import { handleDrag, highlight, LevelStorage, setResetViewHandler, zoomToHighLightedNodes } from './helpers/GraphHelpers';
 import { event } from 'd3-selection';
 import {
+    createHighlightBackground,
     createLabels,
     createLinkElements,
     createLinkPath,
@@ -25,6 +26,8 @@ export const draw = (network: Network, container: HTMLDivElement) => {
     setResetViewHandler();
 
     createMarkers(svgContainer);
+
+    createHighlightBackground(zoomLayer);
 
     const labelNodesGroup = zoomLayer.append('g').attr('id', 'labels');
     const linkElements = createLinkElements(zoomLayer, links);
