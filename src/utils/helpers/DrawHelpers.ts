@@ -181,6 +181,21 @@ export function createLabelPath(this: Node, node: DependencyNode) {
     return 'M4.5,64.18h' + (labelTextWidth + 55) + 'L' + (labelTextWidth + 59.5) + ',35H4.5';
 }
 
+export function createHighlightBackground(
+    svgContainer: NodeSelection<SVGGElement>
+): Selection<SVGRectElement, DependencyNode, Element, HTMLElement> {
+    return svgContainer
+        .append('rect')
+        .attr('id', 'highlight-background')
+        .attr('width', 0)
+        .attr('height', 0)
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('fill', '#000000')
+        .style('z-index', -1)
+        .style('opacity', 0);
+}
+
 export function setKeyboardDependencyHighlightHandler() {
     select('body').on('keydown', () => {
         const labelNodesGroup = select<SVGGElement, DependencyNode>('g#labels');

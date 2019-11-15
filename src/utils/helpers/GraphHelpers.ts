@@ -60,6 +60,8 @@ export function highlight(clickedNode: DependencyNode, links: LinkSelection) {
         return;
     }
 
+    selectHighlightBackground().style('opacity', 0.05);
+
     labelNodes.each(function(this: SVGGElement, node: DependencyNode) {
         const areNodesDirectlyConnected = areNodesConnected(clickedNode, node, linksData);
         const labelElement = this.firstElementChild;
@@ -89,6 +91,10 @@ export function selectAllNodes() {
     return select('#labels').selectAll<SVGGElement, DependencyNode>('g');
 }
 
+export function selectHighlightBackground() {
+    return select('#highlight-background');
+}
+
 export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale?: number) {
     if (dimension) {
         const svgContainer = select('#container');
@@ -111,11 +117,22 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
     }
 }
 
+function setHighlightBackgroundDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>) {
+    if (dimension) {
+        selectHighlightBackground()
+            .attr('x', dimension.x)
+            .attr('y', dimension.y)
+            .attr('width', dimension.width)
+            .attr('height', dimension.height);
+    }
+}
+
 export function zoomToHighLightedNodes() {
     const highlightedNodes = selectHighLightedNodes();
     const dimension = findGroupBackgroundDimension(highlightedNodes.data());
 
     centerScreenToDimension(dimension);
+    setHighlightBackgroundDimension(dimension);
 }
 
 export function setDependencyLevelOnEachNode(clickedNode: DependencyNode, nodes: DependencyNode[]): DependencyNode[] {
@@ -188,9 +205,21 @@ export function getHighLightedLabelColor(node: DependencyNode) {
 
 export function handleDrag(simulation: Simulation<DependencyNode, DependencyLink>) {
     return drag<SVGGElement, DependencyNode>()
-        .on('start', (node: DependencyNode) => dragStarted(node, simulation))
-        .on('drag', dragged)
-        .on('end', (node: DependencyNode) => dragEnded(node, simulation));
+        .on('start', (node: DependencyNode) => {
+            if (!selectHighLightedNodes().data().length) {
+                dragStarted(node, simulation);
+            }
+        })
+        .on('drag', (node: DependencyNode) => {
+            if (!selectHighLightedNodes().data().length) {
+                dragged(node);
+            }
+        })
+        .on('end', (node: DependencyNode) => {
+            if (!selectHighLightedNodes().data().length) {
+                dragEnded(node, simulation);
+            }
+        });
 }
 
 function dragStarted(node: DependencyNode, simulation: Simulation<DependencyNode, DependencyLink>) {
@@ -286,6 +315,8 @@ export function setResetViewHandler() {
                 select<Element, DependencyNode>(labelElement).attr('fill', LabelColors.DEFAULT);
                 select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
             });
+
+            selectHighlightBackground().style('opacity', 0);
 
             centerScreenToDimension(dimension, 1);
         }
