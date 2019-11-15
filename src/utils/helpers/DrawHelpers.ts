@@ -44,9 +44,9 @@ export function createTextElements(labelNodesGroup: NodeSelection<SVGGElement>, 
         .data(nodes)
         .enter()
         .append<SVGGElement>('g')
+        .attr('cursor', 'pointer')
         .append('text')
         .attr('fill', TextColors.DEFAULT)
-        .attr('cursor', 'default')
         .text(d => d.name);
 }
 
@@ -192,7 +192,6 @@ export function createHighlightBackground(
         .attr('x', 0)
         .attr('y', 0)
         .attr('fill', '#000000')
-        .style('z-index', -1)
         .style('opacity', 0);
 }
 
