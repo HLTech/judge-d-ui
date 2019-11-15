@@ -60,8 +60,6 @@ export function highlight(clickedNode: DependencyNode, links: LinkSelection) {
         return;
     }
 
-    selectHighlightBackground().style('opacity', 0.05);
-
     labelNodes.each(function(this: SVGGElement, node: DependencyNode) {
         const areNodesDirectlyConnected = areNodesConnected(clickedNode, node, linksData);
         const labelElement = this.firstElementChild;
@@ -102,28 +100,74 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
         const width = Number(svgContainer.attr('width'));
         const height = Number(svgContainer.attr('height'));
 
-        const scaleValue = Math.min(1.3, 0.9 / Math.max(dimension.width / width, dimension.height / height));
+        const scaleValue = scale || Math.min(1.3, 0.9 / Math.max(dimension.width / width, dimension.height / height));
 
         svgContainer
+            .attr('data-scale', scaleValue)
             .transition()
             .duration(750)
             .call(
                 zoom<any, any>().on('zoom', zoomed).transform,
                 zoomIdentity
                     .translate(width / 2, height / 2)
-                    .scale(scale || scaleValue)
+                    .scale(scaleValue)
                     .translate(-dimension.x - dimension.width / 2, -dimension.y - dimension.height / 2)
             );
     }
 }
 
-function setHighlightBackgroundDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>) {
+function getScaleValue() {
+    return select('#container').attr('data-scale');
+}
+
+function removeHighlightBackground() {
+    selectHighlightBackground().style('opacity', 0);
+    select('#details-button').remove();
+}
+
+function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroundDimension>) {
     if (dimension) {
-        selectHighlightBackground()
+        const highlightBackground = selectHighlightBackground();
+        const scaleValue = Number(getScaleValue());
+
+        highlightBackground
             .attr('x', dimension.x)
             .attr('y', dimension.y)
             .attr('width', dimension.width)
-            .attr('height', dimension.height);
+            .attr('height', dimension.height)
+            .style('opacity', 0.05);
+        if (select('#details-button').empty()) {
+            // TODO move element creation logic to DrawHelpers.ts
+            select('#zoom')
+                .append('g')
+                .attr('id', 'details-button')
+                .on('click', () => {
+                    event.stopPropagation();
+                })
+                .attr('cursor', 'pointer')
+                .append('rect')
+                .attr('fill', '#00a8a8');
+            select('#details-button')
+                .append('text')
+                .attr('fill', TextColors.HIGHLIGHTED)
+                .text('Details');
+        }
+        const buttonWidth = 100 * (1 / scaleValue);
+        const buttonHeight = 40 * (1 / scaleValue);
+        const buttonMargin = 20 * (1 / scaleValue);
+        const buttonTextFontSize = 20 * (1 / scaleValue);
+        const buttonTextPositionX = dimension.x + dimension.width - buttonWidth / 2 - buttonMargin;
+        const buttonTextPositionY = dimension.y + dimension.height - buttonHeight / 2 + 7 * (1 / scaleValue) - buttonMargin;
+        select('#details-button rect')
+            .attr('width', buttonWidth)
+            .attr('height', buttonHeight)
+            .attr('x', dimension.x + dimension.width - buttonWidth - buttonMargin)
+            .attr('y', dimension.y + dimension.height - buttonHeight - buttonMargin);
+        select('#details-button > text')
+            .attr('font-size', buttonTextFontSize)
+            .style('text-anchor', 'middle')
+            .attr('x', buttonTextPositionX)
+            .attr('y', buttonTextPositionY);
     }
 }
 
@@ -132,7 +176,7 @@ export function zoomToHighLightedNodes() {
     const dimension = findGroupBackgroundDimension(highlightedNodes.data());
 
     centerScreenToDimension(dimension);
-    setHighlightBackgroundDimension(dimension);
+    showHighlightBackground(dimension);
 }
 
 export function setDependencyLevelOnEachNode(clickedNode: DependencyNode, nodes: DependencyNode[]): DependencyNode[] {
@@ -316,7 +360,7 @@ export function setResetViewHandler() {
                 select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
             });
 
-            selectHighlightBackground().style('opacity', 0);
+            removeHighlightBackground();
 
             centerScreenToDimension(dimension, 1);
         }
