@@ -1,4 +1,5 @@
 import { SimulationLinkDatum, SimulationNodeDatum } from 'd3-force';
+import { BaseType, Selection } from 'd3-selection';
 
 export interface Network {
     nodes: DependencyNode[];
@@ -39,3 +40,7 @@ export interface ServiceCommunication {
         mimeType: string;
     };
 }
+
+export type NodeSelection<T extends BaseType> = Selection<T, DependencyNode, Element, HTMLElement>;
+
+export type LinkSelection = Selection<SVGPathElement, DependencyLink, SVGGElement, DependencyNode>;
