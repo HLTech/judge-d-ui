@@ -1,5 +1,5 @@
 import { DependencyLink, DependencyNode } from '../../components/types';
-import { select, Selection, event, BaseType } from 'd3-selection';
+import { select, Selection, event, BaseType, selectAll } from 'd3-selection';
 import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
@@ -93,6 +93,18 @@ export function selectHighlightBackground() {
     return select('#highlight-background');
 }
 
+function selectDetailsButtonWrapper() {
+    return select('#details-button');
+}
+
+export function selectDetailsButtonRect() {
+    return selectDetailsButtonWrapper().select('rect');
+}
+
+export function selectDetailsButtonText() {
+    return selectDetailsButtonWrapper().select('text');
+}
+
 export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale?: number) {
     if (dimension) {
         const svgContainer = select('#container');
@@ -121,53 +133,91 @@ function getScaleValue() {
 }
 
 function removeHighlightBackground() {
-    selectHighlightBackground().style('opacity', 0);
-    select('#details-button').remove();
+    const detailsButtonRectSelection = selectDetailsButtonRect();
+    const detailsButtonTextSelection = selectDetailsButtonText();
+    selectAll([selectHighlightBackground().node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
+        .transition()
+        .duration(750)
+        .style('opacity', 0);
 }
 
 function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroundDimension>) {
     if (dimension) {
         const highlightBackground = selectHighlightBackground();
+        const detailsButtonRectSelection = selectDetailsButtonRect();
+        const detailsButtonTextSelection = selectDetailsButtonText();
+
         const scaleValue = Number(getScaleValue());
 
-        highlightBackground
-            .attr('x', dimension.x)
-            .attr('y', dimension.y)
-            .attr('width', dimension.width)
-            .attr('height', dimension.height)
-            .style('opacity', 0.05);
-        if (select('#details-button').empty()) {
-            // TODO move element creation logic to DrawHelpers.ts
-            select('#zoom')
-                .append('g')
-                .attr('id', 'details-button')
-                .on('click', () => {
-                    event.stopPropagation();
-                })
-                .attr('cursor', 'pointer')
-                .append('rect')
-                .attr('fill', '#00a8a8');
-            select('#details-button')
-                .append('text')
-                .attr('fill', TextColors.HIGHLIGHTED)
-                .text('Details');
-        }
+        const isBackgroundNotActive = highlightBackground.style('opacity') !== '0.05';
+
         const buttonWidth = 100 * (1 / scaleValue);
         const buttonHeight = 40 * (1 / scaleValue);
         const buttonMargin = 20 * (1 / scaleValue);
+        const buttonX = dimension.x + dimension.width - buttonWidth - buttonMargin;
+        const buttonY = dimension.y + dimension.height - buttonHeight - buttonMargin;
         const buttonTextFontSize = 20 * (1 / scaleValue);
         const buttonTextPositionX = dimension.x + dimension.width - buttonWidth / 2 - buttonMargin;
         const buttonTextPositionY = dimension.y + dimension.height - buttonHeight / 2 + 7 * (1 / scaleValue) - buttonMargin;
-        select('#details-button rect')
-            .attr('width', buttonWidth)
-            .attr('height', buttonHeight)
-            .attr('x', dimension.x + dimension.width - buttonWidth - buttonMargin)
-            .attr('y', dimension.y + dimension.height - buttonHeight - buttonMargin);
-        select('#details-button > text')
-            .attr('font-size', buttonTextFontSize)
-            .style('text-anchor', 'middle')
-            .attr('x', buttonTextPositionX)
-            .attr('y', buttonTextPositionY);
+
+        if (isBackgroundNotActive) {
+            highlightBackground
+                .attr('x', dimension.x)
+                .attr('y', dimension.y)
+                .attr('width', dimension.width)
+                .attr('height', dimension.height)
+                .transition()
+                .duration(750)
+                .style('opacity', 0.05);
+
+            detailsButtonRectSelection
+                .attr('width', buttonWidth)
+                .attr('height', buttonHeight)
+                .attr('x', buttonX)
+                .attr('y', buttonY)
+                .transition()
+                .duration(750)
+                .style('opacity', 1);
+
+            detailsButtonTextSelection
+                .attr('font-size', buttonTextFontSize)
+                .style('text-anchor', 'middle')
+                .attr('x', buttonTextPositionX)
+                .attr('y', buttonTextPositionY)
+                .transition()
+                .duration(750)
+                .style('opacity', 1);
+        } else {
+            const elementsNextAttributes = [
+                {
+                    x: dimension.x,
+                    y: dimension.y,
+                    width: dimension.width,
+                    height: dimension.height,
+                },
+                {
+                    x: buttonX,
+                    y: buttonY,
+                    width: buttonWidth,
+                    height: buttonHeight,
+                },
+                {
+                    fontSize: buttonTextFontSize,
+                    x: buttonTextPositionX,
+                    y: buttonTextPositionY,
+                },
+            ];
+
+            selectAll([highlightBackground.node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
+                .data(elementsNextAttributes)
+                .transition()
+                .duration(750)
+                .attr('x', node => node.x)
+                .attr('y', node => node.y)
+                .attr('width', node => node.width || 0)
+                .attr('height', node => node.height || 0)
+                .attr('font-size', node => node.fontSize || 0);
+        }
     }
 }
 
