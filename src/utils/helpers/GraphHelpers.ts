@@ -1,24 +1,9 @@
-import { DependencyLink, DependencyNode } from '../../components/types';
-import { select, Selection, event, BaseType, selectAll } from 'd3-selection';
+import { DependencyLink, DependencyNode, LinkSelection, NodeSelection } from '../../components/types';
+import { select, event, selectAll } from 'd3-selection';
 import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
-
-export type NodeSelection<T extends BaseType> = Selection<T, DependencyNode, Element, HTMLElement>;
-
-export type LinkSelection = Selection<SVGPathElement, DependencyLink, SVGGElement, DependencyNode>;
-
-export enum LabelColors {
-    PROVIDER = '#00BFC2',
-    CONSUMER = '#039881',
-    PROVIDER_CONSUMER = '#03939F',
-    DEFAULT = '#dcdee0',
-}
-
-export enum TextColors {
-    HIGHLIGHTED = 'WHITE',
-    DEFAULT = '#5E6063',
-}
+import { BACKGROUND_HIGHLIGHT_OPACITY, LabelColors, Selectors, TextColors, TRANSITION_DURATION } from '../AppConsts';
 
 export function getLabelTextDimensions(node: Node) {
     const textNode = select<SVGGElement, DependencyNode>(node.previousSibling as SVGGElement).node();
@@ -86,15 +71,15 @@ export function selectHighLightedNodes() {
 }
 
 export function selectAllNodes() {
-    return select('#labels').selectAll<SVGGElement, DependencyNode>('g');
+    return select(Selectors.LABELS).selectAll<SVGGElement, DependencyNode>('g');
 }
 
 export function selectHighlightBackground() {
-    return select('#highlight-background');
+    return select(Selectors.HIGHLIGHT_BACKGROUND);
 }
 
 function selectDetailsButtonWrapper() {
-    return select('#details-button');
+    return select(Selectors.DETAILS_BUTTON);
 }
 
 export function selectDetailsButtonRect() {
@@ -107,7 +92,7 @@ export function selectDetailsButtonText() {
 
 export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale?: number) {
     if (dimension) {
-        const svgContainer = select('#container');
+        const svgContainer = select(Selectors.CONTAINER);
 
         const width = Number(svgContainer.attr('width'));
         const height = Number(svgContainer.attr('height'));
@@ -117,7 +102,7 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
         svgContainer
             .attr('data-scale', scaleValue)
             .transition()
-            .duration(750)
+            .duration(TRANSITION_DURATION)
             .call(
                 zoom<any, any>().on('zoom', zoomed).transform,
                 zoomIdentity
@@ -129,7 +114,7 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
 }
 
 function getScaleValue() {
-    return select('#container').attr('data-scale');
+    return select(Selectors.CONTAINER).attr('data-scale');
 }
 
 function removeHighlightBackground() {
@@ -137,7 +122,7 @@ function removeHighlightBackground() {
     const detailsButtonTextSelection = selectDetailsButtonText();
     selectAll([selectHighlightBackground().node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
         .transition()
-        .duration(750)
+        .duration(TRANSITION_DURATION)
         .style('opacity', 0);
 }
 
@@ -149,16 +134,18 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
 
         const scaleValue = Number(getScaleValue());
 
-        const isBackgroundNotActive = highlightBackground.style('opacity') !== '0.05';
+        const isBackgroundNotActive = highlightBackground.style('opacity') !== String(BACKGROUND_HIGHLIGHT_OPACITY);
 
-        const buttonWidth = 100 * (1 / scaleValue);
-        const buttonHeight = 40 * (1 / scaleValue);
-        const buttonMargin = 20 * (1 / scaleValue);
+        const scaleMultiplier = 1 / scaleValue;
+
+        const buttonWidth = 100 * scaleMultiplier;
+        const buttonHeight = 40 * scaleMultiplier;
+        const buttonMargin = 20 * scaleMultiplier;
         const buttonX = dimension.x + dimension.width - buttonWidth - buttonMargin;
         const buttonY = dimension.y + dimension.height - buttonHeight - buttonMargin;
-        const buttonTextFontSize = 20 * (1 / scaleValue);
+        const buttonTextFontSize = 20 * scaleMultiplier;
         const buttonTextPositionX = dimension.x + dimension.width - buttonWidth / 2 - buttonMargin;
-        const buttonTextPositionY = dimension.y + dimension.height - buttonHeight / 2 + 7 * (1 / scaleValue) - buttonMargin;
+        const buttonTextPositionY = dimension.y + dimension.height - buttonHeight / 2 + 7 * scaleMultiplier - buttonMargin;
 
         if (isBackgroundNotActive) {
             highlightBackground
@@ -167,8 +154,8 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
                 .attr('width', dimension.width)
                 .attr('height', dimension.height)
                 .transition()
-                .duration(750)
-                .style('opacity', 0.05);
+                .duration(TRANSITION_DURATION)
+                .style('opacity', BACKGROUND_HIGHLIGHT_OPACITY);
 
             detailsButtonRectSelection
                 .attr('width', buttonWidth)
@@ -176,7 +163,7 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
                 .attr('x', buttonX)
                 .attr('y', buttonY)
                 .transition()
-                .duration(750)
+                .duration(TRANSITION_DURATION)
                 .style('opacity', 1);
 
             detailsButtonTextSelection
@@ -185,7 +172,7 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
                 .attr('x', buttonTextPositionX)
                 .attr('y', buttonTextPositionY)
                 .transition()
-                .duration(750)
+                .duration(TRANSITION_DURATION)
                 .style('opacity', 1);
         } else {
             const elementsNextAttributes = [
@@ -211,12 +198,12 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
             selectAll([highlightBackground.node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
                 .data(elementsNextAttributes)
                 .transition()
-                .duration(750)
-                .attr('x', node => node.x)
-                .attr('y', node => node.y)
-                .attr('width', node => node.width || 0)
-                .attr('height', node => node.height || 0)
-                .attr('font-size', node => node.fontSize || 0);
+                .duration(TRANSITION_DURATION)
+                .attr('x', data => data.x)
+                .attr('y', data => data.y)
+                .attr('width', data => data.width || 0)
+                .attr('height', data => data.height || 0)
+                .attr('font-size', data => data.fontSize || 0);
         }
     }
 }
@@ -339,7 +326,7 @@ function dragEnded(node: DependencyNode, simulation: Simulation<DependencyNode, 
 
 export function zoomed() {
     const { transform } = event;
-    const zoomLayer = select('#zoom');
+    const zoomLayer = select(Selectors.ZOOM);
     zoomLayer.attr('transform', transform);
     zoomLayer.attr('stroke-width', 1 / transform.k);
 }
@@ -390,7 +377,7 @@ export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
 
 export function setResetViewHandler() {
     LevelStorage.reset();
-    const svgContainer = select('#container');
+    const svgContainer = select(Selectors.CONTAINER);
     svgContainer.on('click', () => {
         const highlightedNodes = selectHighLightedNodes();
         if (highlightedNodes.data().length) {
