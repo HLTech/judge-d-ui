@@ -2,6 +2,7 @@ import { DependencyNode, Network } from '../components/types';
 import { handleDrag, highlight, LevelStorage, setResetViewHandler, zoomToHighLightedNodes } from './helpers/GraphHelpers';
 import { event } from 'd3-selection';
 import {
+    createDetailsButton,
     createHighlightBackground,
     createLabels,
     createLinkElements,
@@ -34,6 +35,8 @@ export const draw = (network: Network, container: HTMLDivElement) => {
 
     createTextElements(labelNodesGroup, nodes);
     createLabels(labelNodesGroup, nodes);
+
+    createDetailsButton(zoomLayer);
 
     labelNodesGroup
         .selectAll<SVGGElement, DependencyNode>('g')

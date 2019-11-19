@@ -195,6 +195,26 @@ export function createHighlightBackground(
         .style('opacity', 0);
 }
 
+export function createDetailsButton(svgContainer: NodeSelection<SVGGElement>) {
+    const detailsButtonWrapper = svgContainer
+        .append('g')
+        .attr('id', 'details-button')
+        .on('click', () => {
+            event.stopPropagation();
+        })
+        .attr('cursor', 'pointer');
+    detailsButtonWrapper
+        .append('rect')
+        .style('opacity', 0)
+        .attr('fill', '#00a8a8');
+    detailsButtonWrapper
+        .append('text')
+        .style('opacity', 0)
+        .attr('fill', TextColors.HIGHLIGHTED)
+        .text('Details');
+    return detailsButtonWrapper;
+}
+
 export function setKeyboardDependencyHighlightHandler() {
     select('body').on('keydown', () => {
         const labelNodesGroup = select<SVGGElement, DependencyNode>('g#labels');
