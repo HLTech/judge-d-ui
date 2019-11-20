@@ -14,10 +14,10 @@ export enum LabelColors {
     PROVIDER = '#00BFC2',
     CONSUMER = '#039881',
     PROVIDER_CONSUMER = '#03939F',
-    DEFAULT = '#dcdee0',
+    DEFAULT = '#DCDEE0',
 }
 
 export enum TextColors {
-    HIGHLIGHTED = 'WHITE',
+    HIGHLIGHTED = '#FFFFFF',
     DEFAULT = '#5E6063',
 }

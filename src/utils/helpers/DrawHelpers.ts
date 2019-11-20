@@ -208,6 +208,7 @@ export function createDetailsButton(svgContainer: NodeSelection<SVGGElement>) {
     detailsButtonWrapper
         .append('text')
         .style('opacity', 0)
+        .style('text-anchor', 'middle')
         .attr('fill', TextColors.HIGHLIGHTED)
         .text('Details');
     return detailsButtonWrapper;
