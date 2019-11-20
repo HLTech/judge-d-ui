@@ -91,33 +91,34 @@ export function selectDetailsButtonText() {
 }
 
 export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale?: number) {
-    if (dimension) {
-        const svgContainer = select(Selectors.CONTAINER);
-
-        const width = Number(svgContainer.attr('width'));
-        const height = Number(svgContainer.attr('height'));
-
-        const scaleValue = scale || Math.min(1.3, 0.9 / Math.max(dimension.width / width, dimension.height / height));
-
-        svgContainer
-            .attr('data-scale', scaleValue)
-            .transition()
-            .duration(TRANSITION_DURATION)
-            .call(
-                zoom<any, any>().on('zoom', zoomed).transform,
-                zoomIdentity
-                    .translate(width / 2, height / 2)
-                    .scale(scaleValue)
-                    .translate(-dimension.x - dimension.width / 2, -dimension.y - dimension.height / 2)
-            );
+    if (!dimension) {
+        return;
     }
+    const svgContainer = select(Selectors.CONTAINER);
+
+    const width = Number(svgContainer.attr('width'));
+    const height = Number(svgContainer.attr('height'));
+
+    const scaleValue = scale || Math.min(1.3, 0.9 / Math.max(dimension.width / width, dimension.height / height));
+
+    svgContainer
+        .attr('data-scale', scaleValue)
+        .transition()
+        .duration(TRANSITION_DURATION)
+        .call(
+            zoom<any, any>().on('zoom', zoomed).transform,
+            zoomIdentity
+                .translate(width / 2, height / 2)
+                .scale(scaleValue)
+                .translate(-dimension.x - dimension.width / 2, -dimension.y - dimension.height / 2)
+        );
 }
 
 function getScaleValue() {
     return select(Selectors.CONTAINER).attr('data-scale');
 }
 
-function removeHighlightBackground() {
+function hideHighlightBackground() {
     const detailsButtonRectSelection = selectDetailsButtonRect();
     const detailsButtonTextSelection = selectDetailsButtonText();
     selectAll([selectHighlightBackground().node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
@@ -127,84 +128,72 @@ function removeHighlightBackground() {
 }
 
 function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroundDimension>) {
-    if (dimension) {
-        const highlightBackground = selectHighlightBackground();
-        const detailsButtonRectSelection = selectDetailsButtonRect();
-        const detailsButtonTextSelection = selectDetailsButtonText();
+    if (!dimension) {
+        return;
+    }
+    const highlightBackground = selectHighlightBackground();
+    const detailsButtonRectSelection = selectDetailsButtonRect();
+    const detailsButtonTextSelection = selectDetailsButtonText();
 
-        const scaleValue = Number(getScaleValue());
+    const scaleValue = Number(getScaleValue());
 
-        const isBackgroundNotActive = highlightBackground.style('opacity') !== String(BACKGROUND_HIGHLIGHT_OPACITY);
+    const isBackgroundActive = highlightBackground.style('opacity') === String(BACKGROUND_HIGHLIGHT_OPACITY);
 
-        const scaleMultiplier = 1 / scaleValue;
+    const scaleMultiplier = 1 / scaleValue;
 
-        const buttonWidth = 100 * scaleMultiplier;
-        const buttonHeight = 40 * scaleMultiplier;
-        const buttonMargin = 20 * scaleMultiplier;
-        const buttonX = dimension.x + dimension.width - buttonWidth - buttonMargin;
-        const buttonY = dimension.y + dimension.height - buttonHeight - buttonMargin;
-        const buttonTextFontSize = 20 * scaleMultiplier;
-        const buttonTextPositionX = dimension.x + dimension.width - buttonWidth / 2 - buttonMargin;
-        const buttonTextPositionY = dimension.y + dimension.height - buttonHeight / 2 + 7 * scaleMultiplier - buttonMargin;
+    const buttonWidth = 100 * scaleMultiplier;
+    const buttonHeight = 40 * scaleMultiplier;
+    const buttonMargin = 20 * scaleMultiplier;
+    const buttonX = dimension.x + dimension.width - buttonWidth - buttonMargin;
+    const buttonY = dimension.y + dimension.height - buttonHeight - buttonMargin;
+    const buttonTextFontSize = 20 * scaleMultiplier;
+    const buttonTextPositionX = dimension.x + dimension.width - buttonWidth / 2 - buttonMargin;
+    const buttonTextPositionY = dimension.y + dimension.height - buttonHeight / 2 + 7 * scaleMultiplier - buttonMargin;
 
-        if (isBackgroundNotActive) {
-            highlightBackground
-                .attr('x', dimension.x)
-                .attr('y', dimension.y)
-                .attr('width', dimension.width)
-                .attr('height', dimension.height)
-                .transition()
-                .duration(TRANSITION_DURATION)
-                .style('opacity', BACKGROUND_HIGHLIGHT_OPACITY);
+    const elementsNextAttributes = [
+        {
+            x: dimension.x,
+            y: dimension.y,
+            width: dimension.width,
+            height: dimension.height,
+            opacity: BACKGROUND_HIGHLIGHT_OPACITY,
+        },
+        {
+            x: buttonX,
+            y: buttonY,
+            width: buttonWidth,
+            height: buttonHeight,
+            opacity: 1,
+        },
+        {
+            fontSize: buttonTextFontSize,
+            x: buttonTextPositionX,
+            y: buttonTextPositionY,
+            opacity: 1,
+        },
+    ];
 
-            detailsButtonRectSelection
-                .attr('width', buttonWidth)
-                .attr('height', buttonHeight)
-                .attr('x', buttonX)
-                .attr('y', buttonY)
-                .transition()
-                .duration(TRANSITION_DURATION)
-                .style('opacity', 1);
-
-            detailsButtonTextSelection
-                .attr('font-size', buttonTextFontSize)
-                .style('text-anchor', 'middle')
-                .attr('x', buttonTextPositionX)
-                .attr('y', buttonTextPositionY)
-                .transition()
-                .duration(TRANSITION_DURATION)
-                .style('opacity', 1);
-        } else {
-            const elementsNextAttributes = [
-                {
-                    x: dimension.x,
-                    y: dimension.y,
-                    width: dimension.width,
-                    height: dimension.height,
-                },
-                {
-                    x: buttonX,
-                    y: buttonY,
-                    width: buttonWidth,
-                    height: buttonHeight,
-                },
-                {
-                    fontSize: buttonTextFontSize,
-                    x: buttonTextPositionX,
-                    y: buttonTextPositionY,
-                },
-            ];
-
-            selectAll([highlightBackground.node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
-                .data(elementsNextAttributes)
-                .transition()
-                .duration(TRANSITION_DURATION)
-                .attr('x', data => data.x)
-                .attr('y', data => data.y)
-                .attr('width', data => data.width || 0)
-                .attr('height', data => data.height || 0)
-                .attr('font-size', data => data.fontSize || 0);
-        }
+    if (isBackgroundActive) {
+        selectAll([highlightBackground.node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
+            .data(elementsNextAttributes)
+            .transition()
+            .duration(TRANSITION_DURATION)
+            .attr('x', data => data.x)
+            .attr('y', data => data.y)
+            .attr('width', data => data.width || 0)
+            .attr('height', data => data.height || 0)
+            .attr('font-size', data => data.fontSize || 0);
+    } else {
+        selectAll([highlightBackground.node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
+            .data(elementsNextAttributes)
+            .attr('x', data => data.x)
+            .attr('y', data => data.y)
+            .attr('width', data => data.width || 0)
+            .attr('height', data => data.height || 0)
+            .attr('font-size', data => data.fontSize || 0)
+            .transition()
+            .duration(TRANSITION_DURATION)
+            .style('opacity', data => data.opacity);
     }
 }
 
@@ -285,21 +274,22 @@ export function getHighLightedLabelColor(node: DependencyNode) {
 }
 
 export function handleDrag(simulation: Simulation<DependencyNode, DependencyLink>) {
+    let isDragStarted = false;
     return drag<SVGGElement, DependencyNode>()
         .on('start', (node: DependencyNode) => {
             if (!selectHighLightedNodes().data().length) {
                 dragStarted(node, simulation);
+                isDragStarted = true;
             }
         })
         .on('drag', (node: DependencyNode) => {
-            if (!selectHighLightedNodes().data().length) {
+            if (isDragStarted) {
                 dragged(node);
             }
         })
         .on('end', (node: DependencyNode) => {
-            if (!selectHighLightedNodes().data().length) {
-                dragEnded(node, simulation);
-            }
+            dragEnded(node, simulation);
+            isDragStarted = false;
         });
 }
 
@@ -333,7 +323,7 @@ export function zoomed() {
 
 export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
     if (nodesGroup.length === 0) {
-        return undefined;
+        return;
     }
 
     let upperLimitNode = nodesGroup[0];
@@ -397,7 +387,7 @@ export function setResetViewHandler() {
                 select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
             });
 
-            removeHighlightBackground();
+            hideHighlightBackground();
 
             centerScreenToDimension(dimension, 1);
         }
