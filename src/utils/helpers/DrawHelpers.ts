@@ -5,12 +5,13 @@ import {
     getHighLightedLabelColor,
     zoomToHighLightedNodes,
     LevelStorage,
+    selectHighLightedNodes,
 } from './GraphHelpers';
 import { DependencyLink, DependencyNode, NodeSelection } from '../../components/types';
 import { forceCenter, forceCollide, forceLink, forceSimulation, forceY } from 'd3-force';
 import { event, select, Selection } from 'd3-selection';
 import { zoom } from 'd3-zoom';
-import { LabelColors, TextColors } from '../AppConsts';
+import { BASE_FONT_SIZE, ElementColors, LabelColors, TextColors } from '../AppConsts';
 
 export function createLinkElements(zoomLayer: NodeSelection<SVGGElement>, links: DependencyLink[]) {
     return zoomLayer
@@ -44,6 +45,7 @@ export function createTextElements(labelNodesGroup: NodeSelection<SVGGElement>, 
         .append<SVGGElement>('g')
         .attr('cursor', 'pointer')
         .append('text')
+        .attr('font-size', BASE_FONT_SIZE)
         .attr('fill', TextColors.DEFAULT)
         .text(d => d.name);
 }
@@ -189,7 +191,9 @@ export function createHighlightBackground(
         .attr('height', 0)
         .attr('x', 0)
         .attr('y', 0)
-        .attr('fill', '#000000')
+        .attr('rx', 5)
+        .attr('ry', 5)
+        .attr('fill', ElementColors.HIGHLIGHT_BACKGROUND)
         .style('opacity', 0);
 }
 
@@ -198,13 +202,15 @@ export function createDetailsButton(svgContainer: NodeSelection<SVGGElement>) {
         .append('g')
         .attr('id', 'details-button')
         .on('click', () => {
-            event.stopPropagation();
+            if (selectHighLightedNodes().data().length) {
+                event.stopPropagation();
+            }
         })
         .attr('cursor', 'pointer');
     detailsButtonWrapper
         .append('rect')
         .style('opacity', 0)
-        .attr('fill', '#00a8a8');
+        .attr('fill', ElementColors.BUTTON);
     detailsButtonWrapper
         .append('text')
         .style('opacity', 0)
