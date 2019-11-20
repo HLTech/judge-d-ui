@@ -3,7 +3,7 @@ import { select, event, selectAll } from 'd3-selection';
 import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import { BACKGROUND_HIGHLIGHT_OPACITY, LabelColors, Selectors, TextColors, TRANSITION_DURATION } from '../AppConsts';
+import { BACKGROUND_HIGHLIGHT_OPACITY, BASE_FONT_SIZE, LabelColors, Selectors, TextColors, TRANSITION_DURATION } from '../AppConsts';
 
 export function getLabelTextDimensions(node: Node) {
     const textNode = select<SVGGElement, DependencyNode>(node.previousSibling as SVGGElement).node();
@@ -142,13 +142,15 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
     const scaleMultiplier = 1 / scaleValue;
 
     const buttonWidth = 100 * scaleMultiplier;
-    const buttonHeight = 40 * scaleMultiplier;
-    const buttonMargin = 20 * scaleMultiplier;
-    const buttonX = dimension.x + dimension.width - buttonWidth - buttonMargin;
-    const buttonY = dimension.y + dimension.height - buttonHeight - buttonMargin;
-    const buttonTextFontSize = 20 * scaleMultiplier;
-    const buttonTextPositionX = dimension.x + dimension.width - buttonWidth / 2 - buttonMargin;
-    const buttonTextPositionY = dimension.y + dimension.height - buttonHeight / 2 + 7 * scaleMultiplier - buttonMargin;
+    const buttonHeight = 60 * scaleMultiplier;
+    const buttonMarginBottom = 10 * scaleMultiplier;
+    const buttonMarginRight = 40 * scaleMultiplier;
+    const buttonX = dimension.x + dimension.width - buttonWidth - buttonMarginRight;
+    const buttonY = dimension.y + dimension.height - buttonHeight - buttonMarginBottom;
+    const buttonRadius = 5 * scaleMultiplier;
+    const buttonTextFontSize = BASE_FONT_SIZE * scaleMultiplier;
+    const buttonTextPositionX = dimension.x + dimension.width - buttonWidth / 2 - buttonMarginRight;
+    const buttonTextPositionY = dimension.y + dimension.height - buttonHeight / 2 + 6 * scaleMultiplier - buttonMarginBottom;
 
     const elementsNextAttributes = [
         {
@@ -161,6 +163,8 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
         {
             x: buttonX,
             y: buttonY,
+            rx: buttonRadius,
+            ry: buttonRadius,
             width: buttonWidth,
             height: buttonHeight,
             opacity: 1,
@@ -180,6 +184,8 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
             .duration(TRANSITION_DURATION)
             .attr('x', data => data.x)
             .attr('y', data => data.y)
+            .attr('rx', data => data.rx || 0)
+            .attr('ry', data => data.ry || 0)
             .attr('width', data => data.width || 0)
             .attr('height', data => data.height || 0)
             .attr('font-size', data => data.fontSize || 0);
@@ -188,6 +194,8 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
             .data(elementsNextAttributes)
             .attr('x', data => data.x)
             .attr('y', data => data.y)
+            .attr('rx', data => data.rx || 0)
+            .attr('ry', data => data.ry || 0)
             .attr('width', data => data.width || 0)
             .attr('height', data => data.height || 0)
             .attr('font-size', data => data.fontSize || 0)

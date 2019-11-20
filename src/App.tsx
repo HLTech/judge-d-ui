@@ -5,7 +5,6 @@ import { injectGlobal } from 'emotion';
 injectGlobal`
 * {
     font-family: 'LiberationSansBold';
-    font-size: 15px;
 }
 `;
 
