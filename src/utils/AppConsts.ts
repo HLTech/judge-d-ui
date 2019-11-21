@@ -13,6 +13,9 @@ export const BACKGROUND_HIGHLIGHT_OPACITY = 0.35;
 
 export const BASE_FONT_SIZE = 15;
 
+export const MINIMUM_ZOOM_SCALE = 0.5;
+export const MAXIMUM_ZOOM_SCALE = 12;
+
 export enum LabelColors {
     PROVIDER = '#00BFC2',
     CONSUMER = '#039881',

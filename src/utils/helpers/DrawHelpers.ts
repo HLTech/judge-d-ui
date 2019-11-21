@@ -1,17 +1,9 @@
-import {
-    getLabelTextDimensions,
-    getNodeDimensions,
-    findMaxDependencyLevel,
-    getHighLightedLabelColor,
-    zoomToHighLightedNodes,
-    LevelStorage,
-    selectHighLightedNodes,
-} from './GraphHelpers';
+import { changeZoom, getLabelTextDimensions, getNodeDimensions, selectHighLightedNodes } from './GraphHelpers';
 import { DependencyLink, DependencyNode, NodeSelection } from '../../components/types';
 import { forceCenter, forceCollide, forceLink, forceSimulation, forceY } from 'd3-force';
 import { event, select, Selection } from 'd3-selection';
 import { zoom } from 'd3-zoom';
-import { BASE_FONT_SIZE, ElementColors, LabelColors, TextColors } from '../AppConsts';
+import { BASE_FONT_SIZE, ElementColors, LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, TextColors } from '../AppConsts';
 
 export function createLinkElements(zoomLayer: NodeSelection<SVGGElement>, links: DependencyLink[]) {
     return zoomLayer
@@ -97,13 +89,11 @@ export function createSVGContainer(
 export function createZoom(svgContainer: NodeSelection<SVGSVGElement>): Selection<SVGGElement, DependencyNode, Element, HTMLElement> {
     const zoomLayer = svgContainer.append('g').attr('id', 'zoom');
 
-    const zoomed = () => zoomLayer.attr('transform', event.transform);
-
     svgContainer
         .call(
             zoom<SVGSVGElement, DependencyNode>()
-                .scaleExtent([1 / 2, 12])
-                .on('zoom', zoomed)
+                .scaleExtent([MINIMUM_ZOOM_SCALE, MAXIMUM_ZOOM_SCALE])
+                .on('zoom', changeZoom)
         )
         .on('dblclick.zoom', null);
 
@@ -218,47 +208,4 @@ export function createDetailsButton(svgContainer: NodeSelection<SVGGElement>) {
         .attr('fill', TextColors.HIGHLIGHTED)
         .text('Details');
     return detailsButtonWrapper;
-}
-
-export function setKeyboardDependencyHighlightHandler() {
-    select('body').on('keydown', () => {
-        const labelNodesGroup = select<SVGGElement, DependencyNode>('g#labels');
-        LevelStorage.setMaxLevel(findMaxDependencyLevel(labelNodesGroup));
-
-        if (!isFinite(LevelStorage.getMaxLevel())) {
-            return;
-        }
-
-        if (LevelStorage.isBelowMax() && event.code === 'NumpadAdd') {
-            LevelStorage.increase();
-        }
-
-        if (LevelStorage.isAboveMin() && event.code === 'NumpadSubtract') {
-            LevelStorage.decrease();
-        }
-
-        labelNodesGroup
-            .selectAll<HTMLElement, DependencyNode>('g')
-            .filter((node: DependencyNode) => node.level > 0)
-            .each(function(this: HTMLElement, node: DependencyNode) {
-                const labelElement = this.firstElementChild;
-                const textElement = this.lastElementChild;
-
-                if (!labelElement || !textElement) {
-                    return;
-                }
-
-                let labelColor = LabelColors.DEFAULT;
-                let textColor = TextColors.DEFAULT;
-                if (node.level - 1 <= LevelStorage.getLevel()) {
-                    labelColor = getHighLightedLabelColor(node);
-                    textColor = TextColors.HIGHLIGHTED;
-                }
-
-                select<Element, DependencyNode>(labelElement).attr('fill', labelColor);
-                select<Element, DependencyNode>(textElement).style('fill', textColor);
-            });
-
-        zoomToHighLightedNodes();
-    });
 }
