@@ -1,6 +1,5 @@
 import { DependencyNode, Network } from '../components/types';
-import { handleDrag, highlight, LevelStorage, setResetViewHandler, zoomToHighLightedNodes } from './helpers/GraphHelpers';
-import { event } from 'd3-selection';
+import { handleDrag } from './helpers/GraphHelpers';
 import {
     createDetailsButton,
     createHighlightBackground,
@@ -12,8 +11,13 @@ import {
     createSVGContainer,
     createTextElements,
     createZoom,
-    setKeyboardDependencyHighlightHandler,
 } from './helpers/DrawHelpers';
+import {
+    subscribeToResetHighlight,
+    subscribeToChangeHighlightRangeOnArrowKey,
+    subscribeToHighlight,
+    subscribeToZoomOnArrowKey,
+} from './helpers/UserEventHelpers';
 
 export const draw = (network: Network, container: HTMLDivElement) => {
     const { nodes, links } = network;
@@ -24,8 +28,6 @@ export const draw = (network: Network, container: HTMLDivElement) => {
     const svgContainer = createSVGContainer(container, width, height);
     const zoomLayer = createZoom(svgContainer);
 
-    setResetViewHandler();
-
     createMarkers(svgContainer);
 
     createHighlightBackground(zoomLayer);
@@ -35,22 +37,14 @@ export const draw = (network: Network, container: HTMLDivElement) => {
 
     createTextElements(labelNodesGroup, nodes);
     createLabels(labelNodesGroup, nodes);
-
     createDetailsButton(zoomLayer);
 
-    labelNodesGroup
-        .selectAll<SVGGElement, DependencyNode>('g')
-        .on('click', (node: DependencyNode) => {
-            LevelStorage.reset();
-            if (node.links.length) {
-                highlight(node, linkElements);
-                zoomToHighLightedNodes();
-            }
-            event.stopPropagation();
-        })
-        .call(handleDrag(simulation));
+    labelNodesGroup.selectAll<SVGGElement, DependencyNode>('g').call(handleDrag(simulation));
 
-    setKeyboardDependencyHighlightHandler();
+    subscribeToHighlight();
+    subscribeToResetHighlight();
+    subscribeToChangeHighlightRangeOnArrowKey();
+    subscribeToZoomOnArrowKey();
 
     simulation.on('tick', () => {
         linkElements.each(createLinkPath);

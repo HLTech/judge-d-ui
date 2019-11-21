@@ -1,5 +1,5 @@
-import { DependencyLink, DependencyNode, LinkSelection, NodeSelection } from '../../components/types';
-import { select, event, selectAll } from 'd3-selection';
+import { DependencyLink, DependencyNode, NodeSelection } from '../../components/types';
+import { event, select, selectAll } from 'd3-selection';
 import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
@@ -35,8 +35,8 @@ export function findMaxDependencyLevel(labelNodesGroup: NodeSelection<SVGGElemen
     );
 }
 
-export function highlight(clickedNode: DependencyNode, links: LinkSelection) {
-    const linksData = links.data();
+export function highlight(clickedNode: DependencyNode) {
+    const linksData = selectAllLinks().data();
     const labelNodes = selectAllNodes();
 
     const visitedNodes = setDependencyLevelOnEachNode(clickedNode, labelNodes.data());
@@ -74,6 +74,10 @@ export function selectAllNodes() {
     return select(Selectors.LABELS).selectAll<SVGGElement, DependencyNode>('g');
 }
 
+export function selectAllLinks() {
+    return select(Selectors.LINKS).selectAll<SVGPathElement, DependencyLink>('path');
+}
+
 export function selectHighlightBackground() {
     return select(Selectors.HIGHLIGHT_BACKGROUND);
 }
@@ -106,7 +110,7 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
         .transition()
         .duration(TRANSITION_DURATION)
         .call(
-            zoom<any, any>().on('zoom', zoomed).transform,
+            zoom<any, any>().on('zoom', changeZoom).transform,
             zoomIdentity
                 .translate(width / 2, height / 2)
                 .scale(scaleValue)
@@ -118,13 +122,17 @@ function getScaleValue() {
     return select(Selectors.CONTAINER).attr('data-scale');
 }
 
-function hideHighlightBackground() {
+export function hideHighlightBackground() {
     const detailsButtonRectSelection = selectDetailsButtonRect();
     const detailsButtonTextSelection = selectDetailsButtonText();
     selectAll([selectHighlightBackground().node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
         .transition()
         .duration(TRANSITION_DURATION)
-        .style('opacity', 0);
+        .style('opacity', 0)
+        .end()
+        .then(() => {
+            selectDetailsButtonWrapper().lower();
+        });
 }
 
 function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroundDimension>) {
@@ -190,6 +198,7 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
             .attr('height', data => data.height || 0)
             .attr('font-size', data => data.fontSize || 0);
     } else {
+        selectDetailsButtonWrapper().raise();
         selectAll([highlightBackground.node(), detailsButtonRectSelection.node(), detailsButtonTextSelection.node()])
             .data(elementsNextAttributes)
             .attr('x', data => data.x)
@@ -322,7 +331,7 @@ function dragEnded(node: DependencyNode, simulation: Simulation<DependencyNode, 
     node.fy = null;
 }
 
-export function zoomed() {
+export function changeZoom() {
     const { transform } = event;
     const zoomLayer = select(Selectors.ZOOM);
     zoomLayer.attr('transform', transform);
@@ -371,35 +380,6 @@ export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
         width,
         height,
     };
-}
-
-export function setResetViewHandler() {
-    LevelStorage.reset();
-    const svgContainer = select(Selectors.CONTAINER);
-    svgContainer.on('click', () => {
-        const highlightedNodes = selectHighLightedNodes();
-        if (highlightedNodes.data().length) {
-            selectAllNodes().each((node: DependencyNode) => (node.level = 0));
-
-            const dimension = findGroupBackgroundDimension(highlightedNodes.data());
-
-            highlightedNodes.each(function(this: SVGGElement) {
-                const labelElement = this.firstElementChild;
-                const textElement = this.lastElementChild;
-
-                if (!labelElement || !textElement) {
-                    return;
-                }
-
-                select<Element, DependencyNode>(labelElement).attr('fill', LabelColors.DEFAULT);
-                select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
-            });
-
-            hideHighlightBackground();
-
-            centerScreenToDimension(dimension, 1);
-        }
-    });
 }
 
 export class LevelStorage {
