@@ -5,6 +5,15 @@ import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { BACKGROUND_HIGHLIGHT_OPACITY, BASE_FONT_SIZE, LabelColors, Selectors, TextColors, TRANSITION_DURATION } from '../AppConsts';
 import { ZoomScaleStorage } from './UserEventHelpers';
+import {
+    selectAllLinks,
+    selectAllNodes,
+    selectDetailsButtonRect,
+    selectDetailsButtonText,
+    selectDetailsButtonWrapper,
+    selectHighlightBackground,
+    selectHighLightedNodes,
+} from './Selectors';
 
 export function getLabelTextDimensions(node: Node) {
     const textNode = select<SVGGElement, DependencyNode>(node.previousSibling as SVGGElement).node();
@@ -63,36 +72,6 @@ export function highlight(clickedNode: DependencyNode) {
             select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
         }
     });
-}
-
-export function selectHighLightedNodes() {
-    return selectAllNodes().filter(function(this: SVGGElement) {
-        return this.firstElementChild ? this.firstElementChild.getAttribute('fill') !== LabelColors.DEFAULT : false;
-    });
-}
-
-export function selectAllNodes() {
-    return select(Selectors.LABELS).selectAll<SVGGElement, DependencyNode>('g');
-}
-
-export function selectAllLinks() {
-    return select(Selectors.LINKS).selectAll<SVGPathElement, DependencyLink>('path');
-}
-
-export function selectHighlightBackground() {
-    return select(Selectors.HIGHLIGHT_BACKGROUND);
-}
-
-function selectDetailsButtonWrapper() {
-    return select(Selectors.DETAILS_BUTTON);
-}
-
-export function selectDetailsButtonRect() {
-    return selectDetailsButtonWrapper().select('rect');
-}
-
-export function selectDetailsButtonText() {
-    return selectDetailsButtonWrapper().select('text');
 }
 
 export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale?: number) {
