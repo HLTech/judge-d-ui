@@ -8,12 +8,11 @@ import {
     getHighLightedLabelColor,
     hideHighlightBackground,
     highlight,
-    selectAllNodes,
-    selectHighLightedNodes,
     zoomToHighLightedNodes,
 } from './GraphHelpers';
 import { LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, Selectors, TextColors, ZOOM_DECREASE, ZOOM_INCREASE } from '../AppConsts';
 import { zoom, zoomIdentity } from 'd3-zoom';
+import { selectAllNodes, selectHighLightedNodes } from './Selectors';
 
 enum Subscriptions {
     HIGHLIGHT = 'click.highlight',

@@ -1,9 +1,10 @@
-import { changeZoom, getLabelTextDimensions, getNodeDimensions, selectHighLightedNodes } from './GraphHelpers';
+import { changeZoom, getLabelTextDimensions, getNodeDimensions } from './GraphHelpers';
 import { DependencyLink, DependencyNode, NodeSelection } from '../../components/types';
 import { forceCenter, forceCollide, forceLink, forceSimulation, forceY } from 'd3-force';
 import { event, select, Selection } from 'd3-selection';
 import { zoom } from 'd3-zoom';
 import { BASE_FONT_SIZE, ElementColors, LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, TextColors } from '../AppConsts';
+import { selectHighLightedNodes } from './Selectors';
 
 export function createLinkElements(zoomLayer: NodeSelection<SVGGElement>, links: DependencyLink[]) {
     return zoomLayer
