@@ -4,6 +4,7 @@ import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { BACKGROUND_HIGHLIGHT_OPACITY, BASE_FONT_SIZE, LabelColors, Selectors, TextColors, TRANSITION_DURATION } from '../AppConsts';
+import { ZoomScaleStorage } from './UserEventHelpers';
 
 export function getLabelTextDimensions(node: Node) {
     const textNode = select<SVGGElement, DependencyNode>(node.previousSibling as SVGGElement).node();
@@ -105,8 +106,8 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
 
     const scaleValue = scale || Math.min(1.3, 0.9 / Math.max(dimension.width / width, dimension.height / height));
 
+    ZoomScaleStorage.setScale(scaleValue);
     svgContainer
-        .attr('data-scale', scaleValue)
         .transition()
         .duration(TRANSITION_DURATION)
         .call(
@@ -116,10 +117,6 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
                 .scale(scaleValue)
                 .translate(-dimension.x - dimension.width / 2, -dimension.y - dimension.height / 2)
         );
-}
-
-function getScaleValue() {
-    return select(Selectors.CONTAINER).attr('data-scale');
 }
 
 export function hideHighlightBackground() {
@@ -143,7 +140,7 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
     const detailsButtonRectSelection = selectDetailsButtonRect();
     const detailsButtonTextSelection = selectDetailsButtonText();
 
-    const scaleValue = Number(getScaleValue());
+    const scaleValue = ZoomScaleStorage.getScale();
 
     const isBackgroundActive = highlightBackground.style('opacity') === String(BACKGROUND_HIGHLIGHT_OPACITY);
 
@@ -336,6 +333,7 @@ export function changeZoom() {
     const zoomLayer = select(Selectors.ZOOM);
     zoomLayer.attr('transform', transform);
     zoomLayer.attr('stroke-width', 1 / transform.k);
+    ZoomScaleStorage.setScale(transform.k);
 }
 
 export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
@@ -380,42 +378,4 @@ export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
         width,
         height,
     };
-}
-
-export class LevelStorage {
-    private static level: number = 1;
-    private static maxLevel: number = 1;
-
-    public static getLevel(): number {
-        return this.level;
-    }
-
-    public static increase() {
-        this.level = this.level + 1;
-    }
-
-    public static decrease() {
-        this.level = this.level - 1;
-    }
-
-    public static isBelowMax() {
-        return this.level < this.maxLevel;
-    }
-
-    static isAboveMin() {
-        return this.level > 1;
-    }
-
-    static setMaxLevel(maxLevel: number) {
-        this.maxLevel = maxLevel;
-    }
-
-    static getMaxLevel(): number {
-        return this.maxLevel;
-    }
-
-    public static reset() {
-        this.level = 1;
-        this.maxLevel = 1;
-    }
 }

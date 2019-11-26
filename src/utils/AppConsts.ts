@@ -16,6 +16,9 @@ export const BASE_FONT_SIZE = 15;
 export const MINIMUM_ZOOM_SCALE = 0.5;
 export const MAXIMUM_ZOOM_SCALE = 12;
 
+export const ZOOM_INCREASE = 1.25;
+export const ZOOM_DECREASE = 0.8;
+
 export enum LabelColors {
     PROVIDER = '#00BFC2',
     CONSUMER = '#039881',
