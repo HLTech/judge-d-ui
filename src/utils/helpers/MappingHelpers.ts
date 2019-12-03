@@ -1,4 +1,4 @@
-import { DependencyLink, DependencyNode, Network, Service } from '../../components/types';
+import { DependencyLink, DependencyNode, Network, Service, TreeNode } from '../../components/types';
 import { ServiceDto } from '../../api/api.types';
 import { compareNodes } from './GraphHelpers';
 
@@ -77,6 +77,7 @@ export function createNetworkFromServices(services: Service[]): Network {
     return {
         nodes,
         links: createLinks(nodes, services),
+        detailsNodes: mapServicesToTreeNodes(services),
     };
 }
 
@@ -85,4 +86,28 @@ export function filterConnectedNodes(network: Network) {
         (node: DependencyNode) =>
             network.links.findIndex((link: DependencyLink) => compareNodes(link.source, node) || compareNodes(link.target, node)) >= 0
     );
+}
+
+export function mapServicesToTreeNodes(services: Service[]): TreeNode[] {
+    const allNodes: TreeNode[] = services.map(service => ({
+        name: service.name,
+        consumers: [],
+        providers: [],
+    }));
+
+    return services.reduce((nodes: TreeNode[], service: Service) => {
+        const node = allNodes.find(node => node.name === service.name)!;
+        const providerNames = Object.keys(service.expectations);
+
+        providerNames.forEach((name: string) => {
+            const providerNode = allNodes.find(targetNode => targetNode.name === name);
+
+            if (providerNode) {
+                node.providers.push(providerNode);
+                providerNode.consumers.push(node);
+            }
+        });
+
+        return [...nodes, node];
+    }, [] as TreeNode[]);
 }

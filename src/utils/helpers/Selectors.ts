@@ -24,10 +24,26 @@ export function selectDetailsButtonWrapper() {
     return select(Selectors.DETAILS_BUTTON);
 }
 
+export function selectDetailsExitButtonWrapper() {
+    return select(Selectors.DETAILS_EXIT_BUTTON);
+}
+
 export function selectDetailsButtonRect() {
     return selectDetailsButtonWrapper().select('rect');
 }
 
 export function selectDetailsButtonText() {
     return selectDetailsButtonWrapper().select('text');
+}
+
+export function selectDetailsViewContainer() {
+    return select(Selectors.DETAILS_VIEW_CONTAINER);
+}
+
+export function selectDetailsContainerDiv() {
+    return select(Selectors.DETAILS_CONTAINER_DIV);
+}
+
+export function selectDetailsZoom() {
+    return select(Selectors.ZOOM_DETAILS);
 }

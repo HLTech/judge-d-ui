@@ -4,6 +4,7 @@ import { BaseType, Selection } from 'd3-selection';
 export interface Network {
     nodes: DependencyNode[];
     links: DependencyLink[];
+    detailsNodes: TreeNode[];
 }
 
 export interface DependencyNode extends SimulationNodeDatum {
@@ -21,6 +22,12 @@ export interface DependencyLink extends SimulationLinkDatum<DependencyNode> {
     source: DependencyNode;
     target: DependencyNode;
     type: string;
+}
+
+export interface TreeNode {
+    name: string;
+    consumers: TreeNode[];
+    providers: TreeNode[];
 }
 
 export interface Service {
@@ -42,5 +49,3 @@ export interface ServiceCommunication {
 }
 
 export type NodeSelection<T extends BaseType> = Selection<T, DependencyNode, Element, HTMLElement>;
-
-export type LinkSelection = Selection<SVGPathElement, DependencyLink, SVGGElement, DependencyNode>;
