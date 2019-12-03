@@ -13,20 +13,24 @@ import {
     createZoom,
 } from './helpers/DrawHelpers';
 import {
-    subscribeToResetHighlight,
     subscribeToChangeHighlightRangeOnArrowKey,
+    subscribeToCloseDetails,
     subscribeToHighlight,
+    subscribeToOpenDetails,
+    subscribeToResetHighlight,
     subscribeToZoomOnArrowKey,
 } from './helpers/UserEventHelpers';
+import { createDetailsViewContainer } from './helpers/DetailsDrawHelpers';
+import { Selectors } from './AppConsts';
 
 export const draw = (network: Network, container: HTMLDivElement) => {
-    const { nodes, links } = network;
+    const { nodes, links, detailsNodes } = network;
     const width = container.clientWidth;
     const height = container.clientHeight;
 
     const simulation = createSimulation(nodes, links, width, height);
-    const svgContainer = createSVGContainer(container, width, height);
-    const zoomLayer = createZoom(svgContainer);
+    const svgContainer = createSVGContainer(width, height);
+    const zoomLayer = createZoom(svgContainer, Selectors.ZOOM_OVERVIEW);
 
     createMarkers(svgContainer);
 
@@ -38,6 +42,7 @@ export const draw = (network: Network, container: HTMLDivElement) => {
     createTextElements(labelNodesGroup, nodes);
     createLabels(labelNodesGroup, nodes);
     createDetailsButton(zoomLayer);
+    createDetailsViewContainer(container.clientWidth, container.clientHeight);
 
     labelNodesGroup.selectAll<SVGGElement, DependencyNode>('g').call(handleDrag(simulation));
 
@@ -45,6 +50,8 @@ export const draw = (network: Network, container: HTMLDivElement) => {
     subscribeToResetHighlight();
     subscribeToChangeHighlightRangeOnArrowKey();
     subscribeToZoomOnArrowKey();
+    subscribeToOpenDetails(detailsNodes);
+    subscribeToCloseDetails();
 
     simulation.on('tick', () => {
         linkElements.each(createLinkPath);

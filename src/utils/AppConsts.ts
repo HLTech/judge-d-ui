@@ -4,10 +4,16 @@ export enum Selectors {
     LINKS = '#links',
     HIGHLIGHT_BACKGROUND = '#highlight-background',
     DETAILS_BUTTON = '#details-button',
-    ZOOM = '#zoom',
+    ZOOM_OVERVIEW = '#zoom-overview',
+    ZOOM_DETAILS = '#zoom-details',
+    DETAILS_VIEW_CONTAINER = '#details-view-container',
+    OVERVIEW_CONTAINER_DIV = '#overview-container-div',
+    DETAILS_CONTAINER_DIV = '#details-container-div',
+    DETAILS_EXIT_BUTTON = '#details-exit-button',
 }
 
 export const TRANSITION_DURATION = 750;
+export const FAST_TRANSITION_DURATION = 450;
 
 export const BACKGROUND_HIGHLIGHT_OPACITY = 0.35;
 
@@ -36,4 +42,6 @@ export enum ElementColors {
     HIGHLIGHT_BACKGROUND = '#EDEEF0',
     SLIDER = '#BABEC2',
     SLIDER_LABEL = '#8B8B8C',
+    DETAILS_BACKGROUND = '#FFFFFF',
+    DETAILS_LINK = '#0076EB',
 }

@@ -1,5 +1,5 @@
 import { event, select } from 'd3-selection';
-import { DependencyNode } from '../../components/types';
+import { DependencyNode, TreeNode } from '../../components/types';
 import {
     centerScreenToDimension,
     changeZoom,
@@ -12,13 +12,16 @@ import {
 } from './GraphHelpers';
 import { LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, Selectors, TextColors, ZOOM_DECREASE, ZOOM_INCREASE } from '../AppConsts';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import { selectAllNodes, selectHighLightedNodes } from './Selectors';
+import { selectAllNodes, selectDetailsButtonWrapper, selectDetailsExitButtonWrapper, selectHighLightedNodes } from './Selectors';
+import { initializeDetailsView, shutdownDetailsView } from './DetailsDrawHelpers';
 
 enum Subscriptions {
     HIGHLIGHT = 'click.highlight',
     RESET_HIGHLIGHT = 'click.resetHighlight',
     CHANGE_HIGHLIGHT_RANGE = 'keydown.changeHighlightRange',
     ZOOM_ON_ARROW_KEY = 'keydown.zoom',
+    OPEN_DETAILS = 'click.openDetails',
+    CLOSE_DETAILS = 'click.closeDetails',
 }
 
 export function subscribeToHighlight() {
@@ -116,7 +119,7 @@ export function subscribeToZoomOnArrowKey() {
                     const container = select(Selectors.CONTAINER);
                     container.call(() => {
                         return zoom<any, any>()
-                            .on('zoom', changeZoom)
+                            .on('zoom', changeZoom(Selectors.ZOOM_OVERVIEW))
                             .scaleBy(container, ZOOM_INCREASE);
                     }, zoomIdentity);
                 }
@@ -130,13 +133,37 @@ export function subscribeToZoomOnArrowKey() {
                     const container = select(Selectors.CONTAINER);
                     container.call(() => {
                         return zoom<any, any>()
-                            .on('zoom', changeZoom)
+                            .on('zoom', changeZoom(Selectors.ZOOM_OVERVIEW))
                             .scaleBy(container, ZOOM_DECREASE);
                     }, zoomIdentity);
                 }
                 break;
             }
         }
+    });
+}
+
+export function subscribeToOpenDetails(detailsNodes: TreeNode[]) {
+    selectDetailsButtonWrapper().on(Subscriptions.OPEN_DETAILS, () => {
+        if (selectHighLightedNodes().data().length === 0) {
+            return;
+        }
+        event.stopPropagation();
+        const selectedNode = selectAllNodes()
+            .data()
+            .find(node => node.level === 1);
+        if (selectedNode) {
+            const selectedTreeNode = detailsNodes.find(treeNode => treeNode.name === selectedNode.name);
+            if (selectedTreeNode) {
+                initializeDetailsView(selectedTreeNode);
+            }
+        }
+    });
+}
+
+export function subscribeToCloseDetails() {
+    selectDetailsExitButtonWrapper().on(Subscriptions.CLOSE_DETAILS, () => {
+        shutdownDetailsView();
     });
 }
 

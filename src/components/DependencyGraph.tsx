@@ -68,12 +68,11 @@ export const DependencyGraph: React.FC = () => {
                 {process.env.NODE_ENV === 'development' && (
                     <Radio onChange={handleViewSwitchChange} toggle checked={areOnlyConnectedNodesShown} />
                 )}
-
                 <EnvironmentSelect disabled={isPending} options={environments} env={env} onEnvironmentChange={setEnv} />
             </div>
             {isPending && <LoaderComponent />}
 
-            <Graph nodes={nodes} links={graphNetwork.links} />
+            <Graph network={{ ...graphNetwork, nodes }} />
         </>
     );
 };

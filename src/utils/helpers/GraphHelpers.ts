@@ -90,7 +90,7 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
         .transition()
         .duration(TRANSITION_DURATION)
         .call(
-            zoom<any, any>().on('zoom', changeZoom).transform,
+            zoom<any, any>().on('zoom', changeZoom(Selectors.ZOOM_OVERVIEW)).transform,
             zoomIdentity
                 .translate(width / 2, height / 2)
                 .scale(scaleValue)
@@ -204,7 +204,9 @@ export function setDependencyLevelOnEachNode(clickedNode: DependencyNode, nodes:
     const visitedNodes: DependencyNode[] = [];
     const nodesToVisit: DependencyNode[] = [];
 
-    nodesToVisit.push({ ...clickedNode, level: 1 });
+    clickedNode.level = 1;
+
+    nodesToVisit.push(clickedNode);
 
     while (nodesToVisit.length > 0) {
         const currentNode = nodesToVisit.shift();
@@ -307,13 +309,13 @@ function dragEnded(node: DependencyNode, simulation: Simulation<DependencyNode, 
     node.fy = null;
 }
 
-export function changeZoom() {
+export const changeZoom = (zoomSelector: Selectors.ZOOM_OVERVIEW | Selectors.ZOOM_DETAILS) => () => {
     const { transform } = event;
-    const zoomLayer = select(Selectors.ZOOM);
+    const zoomLayer = select(zoomSelector);
     zoomLayer.attr('transform', transform);
     zoomLayer.attr('stroke-width', 1 / transform.k);
     ZoomScaleStorage.setScale(transform.k);
-}
+};
 
 export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
     if (nodesGroup.length === 0) {
