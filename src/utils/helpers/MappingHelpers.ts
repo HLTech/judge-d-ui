@@ -95,7 +95,7 @@ export function mapServicesToTreeNodes(services: Service[]): TreeNode[] {
         providers: [],
     }));
 
-    return services.reduce((nodes: TreeNode[], service: Service) => {
+    services.forEach(service => {
         const node = allNodes.find(node => node.name === service.name)!;
         const providerNames = Object.keys(service.expectations);
 
@@ -107,7 +107,7 @@ export function mapServicesToTreeNodes(services: Service[]): TreeNode[] {
                 providerNode.consumers.push(node);
             }
         });
+    });
 
-        return [...nodes, node];
-    }, [] as TreeNode[]);
+    return allNodes;
 }
