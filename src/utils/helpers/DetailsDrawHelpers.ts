@@ -94,8 +94,8 @@ function createDiagram(
     tree: HierarchyPointNode<TreeStructure>,
     containerWidth: number,
     containerHeight: number,
-    rootNodeXOffset: number,
-    drawToLeft?: boolean
+    rootNodeYOffset: number,
+    drawToLeft: boolean = false
 ) {
     if (!tree.children || !tree.children.length) {
         return null;
@@ -105,12 +105,12 @@ function createDiagram(
     const diagramXOffset = -diagramWidth / 8;
     const diagramYOffset = -containerHeight / 2;
 
-    const svg = create('svg').attr('viewBox', `${diagramXOffset} ${diagramYOffset + rootNodeXOffset} ${diagramWidth} ${containerHeight}`);
+    const svg = create('svg').attr('viewBox', `${diagramXOffset} ${diagramYOffset + rootNodeYOffset} ${diagramWidth} ${containerHeight}`);
 
     const g = svg
         .append('g')
         .attr('font-size', 15)
-        .attr('transform', `translate(0,${rootNodeXOffset}) ${drawToLeft ? 'rotate(180)' : ''}`);
+        .attr('transform', transformDiagramElement(0, rootNodeYOffset, drawToLeft));
 
     g.append('g')
         .attr('fill', 'none')
@@ -133,7 +133,7 @@ function createDiagram(
         .selectAll('g')
         .data(tree.descendants())
         .join('g')
-        .attr('transform', d => `translate(${d.y},${d.x}) ${drawToLeft ? 'rotate(180)' : ''}`);
+        .attr('transform', d => transformDiagramElement(d.y, d.x, drawToLeft));
 
     node.append('text')
         .attr('dy', '0.31em')
@@ -149,6 +149,10 @@ function createDiagram(
     return svg.node();
 }
 
+function transformDiagramElement(xOffset: number, yOffset: number, drawToLeft: boolean) {
+    return `translate(${xOffset},${yOffset}) ${drawToLeft ? 'rotate(180)' : ''}`;
+}
+
 function createDiagrams(
     container: ReturnType<typeof selectDetailsViewContainer>,
     consumersData: TreeStructure,
@@ -162,10 +166,10 @@ function createDiagrams(
     const consumersRootYPosition = getRootYPosition(consumersTree);
     const providersRootYPosition = getRootYPosition(providersTree);
 
-    const rootNodeXOffset = Math.max(consumersRootYPosition, providersRootYPosition);
+    const rootNodeYOffset = Math.max(consumersRootYPosition, providersRootYPosition);
 
-    const consumersDiagram = createDiagram(consumersTree, width, height, rootNodeXOffset, true);
-    const providersDiagram = createDiagram(providersTree, width, height, rootNodeXOffset);
+    const consumersDiagram = createDiagram(consumersTree, width, height, rootNodeYOffset, true);
+    const providersDiagram = createDiagram(providersTree, width, height, rootNodeYOffset);
 
     if (providersDiagram) {
         container.append<SVGSVGElement>(() => providersDiagram);
