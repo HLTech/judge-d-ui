@@ -30,8 +30,7 @@ const graphCls = css({
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
-    height: '90vh',
-    paddingTop: 20,
+    height: '100vh',
     '& > svg': {
         flex: 1,
         overflow: 'hidden',
