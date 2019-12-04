@@ -61,14 +61,11 @@ export const DependencyGraph: React.FC = () => {
     }, [showOnlyConnectedNodes, onlyNodesWithContracts, graphNetwork]);
 
     return (
-        <div className={containerCls}>
+        <>
             <div className={optionsCls}>
+                <h1 className={headerCls}>Judge-Dredd UI</h1>
                 {process.env.NODE_ENV === 'development' && (
-                    <>
-                        <Radio onChange={handleViewSwitchChange} toggle checked={showOnlyConnectedNodes} />
-
-                        <input type="range" step="1" min="1" id="dependencyLevelInput" defaultValue="1" />
-                    </>
+                    <Radio onChange={handleViewSwitchChange} toggle checked={showOnlyConnectedNodes} />
                 )}
 
                 <EnvironmentSelect disabled={isPending} options={environments} env={env} onEnvironmentChange={setEnv} />
@@ -76,16 +73,19 @@ export const DependencyGraph: React.FC = () => {
             {isPending && <LoaderComponent />}
 
             <Graph nodes={nodes} links={graphNetwork.links} />
-        </div>
+        </>
     );
 };
 
-const containerCls = css({
-    padding: 20,
-});
-
 const optionsCls = css({
     display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    position: 'absolute',
+    backgroundColor: '#FFFFFF',
+    padding: '10px 10px 10px 30px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+});
+
+const headerCls = css({
+    margin: 0,
 });
