@@ -21,7 +21,7 @@ import {
     subscribeToZoomOnArrowKey,
 } from './helpers/UserEventHelpers';
 import { createDetailsViewContainer } from './helpers/DetailsDrawHelpers';
-import { Selectors } from './AppConsts';
+import { ElementIds } from './AppConsts';
 
 export const draw = (network: Network, container: HTMLDivElement) => {
     const { nodes, links, detailsNodes } = network;
@@ -30,13 +30,13 @@ export const draw = (network: Network, container: HTMLDivElement) => {
 
     const simulation = createSimulation(nodes, links, width, height);
     const svgContainer = createSVGContainer(width, height);
-    const zoomLayer = createZoom(svgContainer, Selectors.ZOOM_OVERVIEW);
+    const zoomLayer = createZoom(svgContainer, ElementIds.ZOOM_OVERVIEW);
 
     createMarkers(svgContainer);
 
     createHighlightBackground(zoomLayer);
 
-    const labelNodesGroup = zoomLayer.append('g').attr('id', 'labels');
+    const labelNodesGroup = zoomLayer.append('g').attr('id', ElementIds.LABELS);
     const linkElements = createLinkElements(zoomLayer, links);
 
     createTextElements(labelNodesGroup, nodes);

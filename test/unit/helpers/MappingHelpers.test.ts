@@ -1,5 +1,7 @@
-import { mapServiceDtoToService } from '../../../src/utils/helpers/MappingHelpers';
+import { mapServiceDtoToService, mapServicesToTreeNodes } from '../../../src/utils/helpers/MappingHelpers';
 import { ExpectationsDto, ServiceCommunicationDto, ServiceDto } from '../../../src/api/api.types';
+import { Service, TreeNode } from '../../../src/components/types';
+import { emptyService } from './MappingHelpers.fixture';
 
 describe('mapServiceDtoToService', () => {
     it('should correctly map empty serviceDto to service', () => {
@@ -92,6 +94,45 @@ describe('mapServiceDtoToService', () => {
                 mimeType: expectations[provider].rest.mimeType,
             });
         });
+    });
+});
+
+describe('mapServicesToTreeNodes', () => {
+    it('should return empty table for given empty table', () => {
+        expect(mapServicesToTreeNodes([])).toEqual([]);
+    });
+
+    it('should properly map services to tree nodes', () => {
+        const services: Service[] = [
+            {
+                ...emptyService,
+                name: 'service-1',
+                expectations: {
+                    'service-2': {
+                        rest: {
+                            value: {},
+                            mimeType: '',
+                        },
+                    },
+                },
+            },
+            {
+                ...emptyService,
+                name: 'service-2',
+            },
+        ];
+        const firstTreeNode: TreeNode = {
+            consumers: [],
+            name: 'service-1',
+            providers: [],
+        };
+        const secondTreeNode: TreeNode = {
+            consumers: [firstTreeNode],
+            name: 'service-2',
+            providers: [],
+        };
+        firstTreeNode.providers = [secondTreeNode];
+        expect(mapServicesToTreeNodes(services)).toEqual([firstTreeNode, secondTreeNode]);
     });
 });
 

@@ -1,6 +1,7 @@
 import { select } from 'd3-selection';
-import { LabelColors, Selectors } from '../AppConsts';
+import { LabelColors, ElementIds } from '../AppConsts';
 import { DependencyLink, DependencyNode } from '../../components/types';
+import { BaseType } from 'd3-selection';
 
 export function selectHighLightedNodes() {
     return selectAllNodes().filter(function(this: SVGGElement) {
@@ -9,23 +10,23 @@ export function selectHighLightedNodes() {
 }
 
 export function selectAllNodes() {
-    return select(Selectors.LABELS).selectAll<SVGGElement, DependencyNode>('g');
+    return selectById(ElementIds.LABELS).selectAll<SVGGElement, DependencyNode>('g');
 }
 
 export function selectAllLinks() {
-    return select(Selectors.LINKS).selectAll<SVGPathElement, DependencyLink>('path');
+    return selectById(ElementIds.LINKS).selectAll<SVGPathElement, DependencyLink>('path');
 }
 
 export function selectHighlightBackground() {
-    return select(Selectors.HIGHLIGHT_BACKGROUND);
+    return selectById(ElementIds.HIGHLIGHT_BACKGROUND);
 }
 
 export function selectDetailsButtonWrapper() {
-    return select(Selectors.DETAILS_BUTTON);
+    return selectById(ElementIds.DETAILS_BUTTON);
 }
 
 export function selectDetailsExitButtonWrapper() {
-    return select(Selectors.DETAILS_EXIT_BUTTON);
+    return selectById(ElementIds.DETAILS_EXIT_BUTTON);
 }
 
 export function selectDetailsButtonRect() {
@@ -37,13 +38,21 @@ export function selectDetailsButtonText() {
 }
 
 export function selectDetailsViewContainer() {
-    return select(Selectors.DETAILS_VIEW_CONTAINER);
+    return selectById(ElementIds.DETAILS_VIEW_CONTAINER);
 }
 
 export function selectDetailsContainerDiv() {
-    return select(Selectors.DETAILS_CONTAINER_DIV);
+    return selectById(ElementIds.DETAILS_CONTAINER_DIV);
 }
 
 export function selectDetailsZoom() {
-    return select(Selectors.ZOOM_DETAILS);
+    return selectById(ElementIds.ZOOM_DETAILS);
+}
+
+export function selectContainer() {
+    return selectById(ElementIds.CONTAINER);
+}
+
+export function selectById<Data = unknown>(selector: ElementIds) {
+    return select<BaseType, Data>(`#${selector}`);
 }

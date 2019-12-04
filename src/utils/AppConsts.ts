@@ -1,15 +1,15 @@
-export enum Selectors {
-    CONTAINER = '#container',
-    LABELS = '#labels',
-    LINKS = '#links',
-    HIGHLIGHT_BACKGROUND = '#highlight-background',
-    DETAILS_BUTTON = '#details-button',
-    ZOOM_OVERVIEW = '#zoom-overview',
-    ZOOM_DETAILS = '#zoom-details',
-    DETAILS_VIEW_CONTAINER = '#details-view-container',
-    OVERVIEW_CONTAINER_DIV = '#overview-container-div',
-    DETAILS_CONTAINER_DIV = '#details-container-div',
-    DETAILS_EXIT_BUTTON = '#details-exit-button',
+export enum ElementIds {
+    CONTAINER = 'container',
+    LABELS = 'labels',
+    LINKS = 'links',
+    HIGHLIGHT_BACKGROUND = 'highlight-background',
+    DETAILS_BUTTON = 'details-button',
+    ZOOM_OVERVIEW = 'zoom-overview',
+    ZOOM_DETAILS = 'zoom-details',
+    DETAILS_VIEW_CONTAINER = 'details-view-container',
+    OVERVIEW_CONTAINER_DIV = 'overview-container-div',
+    DETAILS_CONTAINER_DIV = 'details-container-div',
+    DETAILS_EXIT_BUTTON = 'details-exit-button',
 }
 
 export const TRANSITION_DURATION = 750;

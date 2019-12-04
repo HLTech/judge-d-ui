@@ -4,7 +4,7 @@ import { css } from 'emotion';
 import { draw } from '../utils/Draw';
 import { select } from 'd3-selection';
 import { Network } from './types';
-import { Selectors } from '../utils/AppConsts';
+import { ElementIds } from '../utils/AppConsts';
 
 export interface GraphProps {
     network: Network;
@@ -15,7 +15,7 @@ export const Graph = React.memo<GraphProps>(({ network: { nodes, links, detailsN
 
     useEffect(() => {
         select(dependencyGraphDiv.current)
-            .selectAll(`${Selectors.OVERVIEW_CONTAINER_DIV} > *, ${Selectors.DETAILS_CONTAINER_DIV} > *`)
+            .selectAll(`${ElementIds.OVERVIEW_CONTAINER_DIV} > *, ${ElementIds.DETAILS_CONTAINER_DIV} > *`)
             .remove();
         if (dependencyGraphDiv.current !== null && nodes.length > 0) {
             draw({ nodes, links, detailsNodes }, dependencyGraphDiv.current);
@@ -24,8 +24,8 @@ export const Graph = React.memo<GraphProps>(({ network: { nodes, links, detailsN
 
     return (
         <div ref={dependencyGraphDiv} className={graphContainerCls}>
-            <div id={'overview-container-div'} className={graphOverviewCls} />
-            <div id={'details-container-div'} className={graphOverviewCls} />
+            <div id={ElementIds.OVERVIEW_CONTAINER_DIV} className={graphOverviewCls} />
+            <div id={ElementIds.DETAILS_CONTAINER_DIV} className={graphOverviewCls} />
         </div>
     );
 });
