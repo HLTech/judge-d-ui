@@ -10,9 +10,15 @@ import {
     highlight,
     zoomToHighLightedNodes,
 } from './GraphHelpers';
-import { LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, Selectors, TextColors, ZOOM_DECREASE, ZOOM_INCREASE } from '../AppConsts';
+import { LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, ElementIds, TextColors, ZOOM_DECREASE, ZOOM_INCREASE } from '../AppConsts';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import { selectAllNodes, selectDetailsButtonWrapper, selectDetailsExitButtonWrapper, selectHighLightedNodes } from './Selectors';
+import {
+    selectAllNodes,
+    selectContainer,
+    selectDetailsButtonWrapper,
+    selectDetailsExitButtonWrapper,
+    selectHighLightedNodes,
+} from './Selectors';
 import { initializeDetailsView, shutdownDetailsView } from './DetailsDrawHelpers';
 
 enum Subscriptions {
@@ -82,7 +88,7 @@ export function subscribeToChangeHighlightRangeOnArrowKey() {
 }
 
 export function subscribeToResetHighlight() {
-    select(Selectors.CONTAINER).on(Subscriptions.RESET_HIGHLIGHT, () => {
+    selectContainer().on(Subscriptions.RESET_HIGHLIGHT, () => {
         const highlightedNodes = selectHighLightedNodes();
         if (highlightedNodes.data().length) {
             selectAllNodes().each((node: DependencyNode) => (node.level = 0));
@@ -116,10 +122,10 @@ export function subscribeToZoomOnArrowKey() {
                 const newScaleValue = currentScaleValue * ZOOM_INCREASE;
                 if (newScaleValue <= MAXIMUM_ZOOM_SCALE) {
                     ZoomScaleStorage.setScale(newScaleValue);
-                    const container = select(Selectors.CONTAINER);
+                    const container = selectContainer();
                     container.call(() => {
                         return zoom<any, any>()
-                            .on('zoom', changeZoom(Selectors.ZOOM_OVERVIEW))
+                            .on('zoom', changeZoom(ElementIds.ZOOM_OVERVIEW))
                             .scaleBy(container, ZOOM_INCREASE);
                     }, zoomIdentity);
                 }
@@ -130,10 +136,10 @@ export function subscribeToZoomOnArrowKey() {
                 const newScaleValue = currentScaleValue * ZOOM_DECREASE;
                 if (newScaleValue >= MINIMUM_ZOOM_SCALE) {
                     ZoomScaleStorage.setScale(newScaleValue);
-                    const container = select(Selectors.CONTAINER);
+                    const container = selectContainer();
                     container.call(() => {
                         return zoom<any, any>()
-                            .on('zoom', changeZoom(Selectors.ZOOM_OVERVIEW))
+                            .on('zoom', changeZoom(ElementIds.ZOOM_OVERVIEW))
                             .scaleBy(container, ZOOM_DECREASE);
                     }, zoomIdentity);
                 }

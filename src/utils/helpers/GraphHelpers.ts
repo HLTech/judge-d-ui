@@ -3,11 +3,13 @@ import { event, select, selectAll } from 'd3-selection';
 import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import { BACKGROUND_HIGHLIGHT_OPACITY, BASE_FONT_SIZE, LabelColors, Selectors, TextColors, TRANSITION_DURATION } from '../AppConsts';
+import { BACKGROUND_HIGHLIGHT_OPACITY, BASE_FONT_SIZE, LabelColors, ElementIds, TextColors, TRANSITION_DURATION } from '../AppConsts';
 import { ZoomScaleStorage } from './UserEventHelpers';
 import {
     selectAllLinks,
     selectAllNodes,
+    selectById,
+    selectContainer,
     selectDetailsButtonRect,
     selectDetailsButtonText,
     selectDetailsButtonWrapper,
@@ -26,8 +28,7 @@ export function getLabelTextDimensions(node: Node) {
 }
 
 export function getNodeDimensions(selectedNode: DependencyNode): { width: number; height: number } {
-    const foundNode = select<SVGGElement, DependencyNode>('#labels')
-        .selectAll<SVGGElement, DependencyNode>('g')
+    const foundNode = selectAllNodes()
         .filter((node: DependencyNode) => node.x === selectedNode.x && node.y === selectedNode.y)
         .node();
     return foundNode ? foundNode.getBBox() : { width: 200, height: 25 };
@@ -78,7 +79,8 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
     if (!dimension) {
         return;
     }
-    const svgContainer = select(Selectors.CONTAINER);
+
+    const svgContainer = selectContainer();
 
     const width = Number(svgContainer.attr('width'));
     const height = Number(svgContainer.attr('height'));
@@ -90,7 +92,7 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
         .transition()
         .duration(TRANSITION_DURATION)
         .call(
-            zoom<any, any>().on('zoom', changeZoom(Selectors.ZOOM_OVERVIEW)).transform,
+            zoom<any, any>().on('zoom', changeZoom(ElementIds.ZOOM_OVERVIEW)).transform,
             zoomIdentity
                 .translate(width / 2, height / 2)
                 .scale(scaleValue)
@@ -309,9 +311,9 @@ function dragEnded(node: DependencyNode, simulation: Simulation<DependencyNode, 
     node.fy = null;
 }
 
-export const changeZoom = (zoomSelector: Selectors.ZOOM_OVERVIEW | Selectors.ZOOM_DETAILS) => () => {
+export const changeZoom = (zoomSelector: ElementIds.ZOOM_OVERVIEW | ElementIds.ZOOM_DETAILS) => () => {
     const { transform } = event;
-    const zoomLayer = select(zoomSelector);
+    const zoomLayer = selectById(zoomSelector);
     zoomLayer.attr('transform', transform);
     zoomLayer.attr('stroke-width', 1 / transform.k);
     ZoomScaleStorage.setScale(transform.k);

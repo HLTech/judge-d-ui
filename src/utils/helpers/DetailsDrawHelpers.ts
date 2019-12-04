@@ -1,6 +1,6 @@
 import { TreeNode } from '../../components/types';
 import { selectDetailsContainerDiv, selectDetailsExitButtonWrapper, selectDetailsViewContainer, selectDetailsZoom } from './Selectors';
-import { ElementColors, FAST_TRANSITION_DURATION, Selectors } from '../AppConsts';
+import { ElementColors, FAST_TRANSITION_DURATION, ElementIds } from '../AppConsts';
 import { hierarchy, HierarchyPointNode, tree } from 'd3-hierarchy';
 import { create, linkHorizontal, zoom, zoomIdentity, symbol, symbolCross } from 'd3';
 import { createZoom } from './DrawHelpers';
@@ -9,11 +9,12 @@ import { changeZoom } from './GraphHelpers';
 export function createDetailsViewContainer(width: number, height: number) {
     const containerWidth = width * 4;
     const containerHeight = height * 4;
+
     const container = selectDetailsContainerDiv()
         .style('display', 'none')
         .style('opacity', 0)
         .append('svg')
-        .attr('id', 'details-view-container')
+        .attr('id', ElementIds.DETAILS_VIEW_CONTAINER)
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', containerWidth)
@@ -27,7 +28,7 @@ export function createDetailsViewContainer(width: number, height: number) {
         .attr('fill', ElementColors.DETAILS_BACKGROUND);
     container
         .append('g')
-        .attr('id', 'details-exit-button')
+        .attr('id', ElementIds.DETAILS_EXIT_BUTTON)
         .attr('cursor', 'pointer')
         .append('rect')
         .attr('transform', 'translate(5,5)')
@@ -43,9 +44,9 @@ export function createDetailsViewContainer(width: number, height: number) {
                 .type(symbolCross)
                 .size(20)
         );
-    createZoom(container, Selectors.ZOOM_DETAILS);
+    createZoom(container, ElementIds.ZOOM_DETAILS);
     container.call(
-        zoom<any, any>().on('zoom', changeZoom(Selectors.ZOOM_DETAILS)).transform,
+        zoom<any, any>().on('zoom', changeZoom(ElementIds.ZOOM_DETAILS)).transform,
         // rough center screen on diagram's root node
         zoomIdentity.translate(-width / 5.3, -height / 2.65)
     );
@@ -58,9 +59,9 @@ interface TreeStructure {
 
 type TreeNodeWithVisitedFlag = TreeNode & { isVisited?: boolean };
 
-function mapNodeToTreeStructure(node: TreeNodeWithVisitedFlag, links: (keyof TreeNode & 'consumers') | 'providers'): TreeStructure {
+function mapNodeToTreeStructure(node: TreeNodeWithVisitedFlag, links: 'consumers' | 'providers'): TreeStructure {
     node.isVisited = true;
-    const UnvisitedLinks = node[links].filter((node: TreeNodeWithVisitedFlag) => !node.isVisited && node[links]);
+    const UnvisitedLinks = node[links].filter((linkedNode: TreeNodeWithVisitedFlag) => !linkedNode.isVisited && linkedNode[links]);
     const children = UnvisitedLinks.length > 0 ? UnvisitedLinks.map(nestedNode => mapNodeToTreeStructure(nestedNode, links)) : [];
     node.isVisited = undefined;
     return { name: node.name, children };
@@ -83,9 +84,7 @@ function createTree(data: TreeStructure) {
 
 function getRootYPosition(data: HierarchyPointNode<TreeStructure>) {
     let x0 = Infinity;
-    let x1 = -x0;
     data.each(node => {
-        if (node.x > x1) x1 = node.x;
         if (node.x < x0) x0 = node.x;
     });
     return VERTICAL_DISTANCE_BETWEEN_NODES - x0;

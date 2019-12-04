@@ -3,12 +3,13 @@ import { DependencyLink, DependencyNode, NodeSelection } from '../../components/
 import { forceCenter, forceCollide, forceLink, forceSimulation, forceY } from 'd3-force';
 import { select, Selection } from 'd3-selection';
 import { zoom } from 'd3-zoom';
-import { BASE_FONT_SIZE, ElementColors, LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, Selectors, TextColors } from '../AppConsts';
+import { BASE_FONT_SIZE, ElementColors, LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, ElementIds, TextColors } from '../AppConsts';
+import { selectById } from './Selectors';
 
 export function createLinkElements(zoomLayer: NodeSelection<SVGGElement>, links: DependencyLink[]) {
     return zoomLayer
         .append('g')
-        .attr('id', 'links')
+        .attr('id', ElementIds.LINKS)
         .lower()
         .selectAll<HTMLElement, DependencyLink>('line.link')
         .data(links)
@@ -42,7 +43,7 @@ export function createTextElements(labelNodesGroup: NodeSelection<SVGGElement>, 
         .text(d => d.name);
 }
 
-export function createMarkers(svgContainer: NodeSelection<SVGSVGElement>): void {
+export function createMarkers(svgContainer: any): void {
     svgContainer
         .append('svg:defs')
         .append('svg:marker')
@@ -72,18 +73,18 @@ export function createSimulation(nodes: DependencyNode[], links: DependencyLink[
         .force('nodeCollide', forceCollide(140));
 }
 
-export function createSVGContainer(width: number, height: number): Selection<SVGSVGElement, DependencyNode, Element, HTMLElement> {
-    return select<Element, DependencyNode>(Selectors.OVERVIEW_CONTAINER_DIV)
+export function createSVGContainer(width: number, height: number) {
+    return selectById(ElementIds.OVERVIEW_CONTAINER_DIV)
         .append('svg')
-        .attr('id', 'container')
+        .attr('id', ElementIds.CONTAINER)
         .attr('preserveAspectRatio', 'xMidYMid meet')
         .attr('viewBox', `0 0 ${width} ${height}`)
         .attr('width', width)
         .attr('height', height);
 }
 
-export function createZoom(svgContainer: Selection<any, any, any, any>, selector: Selectors.ZOOM_OVERVIEW | Selectors.ZOOM_DETAILS) {
-    const zoomLayer = svgContainer.append('g').attr('id', selector.slice(1));
+export function createZoom(svgContainer: NodeSelection<SVGSVGElement>, selector: ElementIds.ZOOM_OVERVIEW | ElementIds.ZOOM_DETAILS) {
+    const zoomLayer = svgContainer.append('g').attr('id', selector);
 
     svgContainer
         .call(
@@ -172,7 +173,7 @@ export function createHighlightBackground(
 ): Selection<SVGRectElement, DependencyNode, Element, HTMLElement> {
     return svgContainer
         .append('rect')
-        .attr('id', 'highlight-background')
+        .attr('id', ElementIds.HIGHLIGHT_BACKGROUND)
         .attr('width', 0)
         .attr('height', 0)
         .attr('x', 0)
@@ -186,7 +187,7 @@ export function createHighlightBackground(
 export function createDetailsButton(svgContainer: NodeSelection<SVGGElement>) {
     const detailsButtonWrapper = svgContainer
         .append('g')
-        .attr('id', 'details-button')
+        .attr('id', ElementIds.DETAILS_BUTTON)
         .attr('cursor', 'pointer');
     detailsButtonWrapper
         .append('rect')
