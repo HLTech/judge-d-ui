@@ -84,6 +84,7 @@ const optionsCls = css({
     padding: '10px 10px 10px 30px',
     flexDirection: 'column',
     justifyContent: 'center',
+    zIndex: 5,
 });
 
 const headerCls = css({

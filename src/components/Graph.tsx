@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import { draw } from '../utils/Draw';
 import { select } from 'd3-selection';
 import { Network } from './types';
@@ -25,7 +25,7 @@ export const Graph = React.memo<GraphProps>(({ network: { nodes, links, detailsN
     return (
         <div ref={dependencyGraphDiv} className={graphContainerCls}>
             <div id={ElementIds.OVERVIEW_CONTAINER_DIV} className={graphOverviewCls} />
-            <div id={ElementIds.DETAILS_CONTAINER_DIV} className={graphOverviewCls} />
+            <div id={ElementIds.DETAILS_CONTAINER_DIV} className={cx(graphOverviewCls, graphDetailsCls)} />
         </div>
     );
 });
@@ -48,4 +48,8 @@ const graphOverviewCls = css({
     left: 0,
     right: 0,
     bottom: 0,
+});
+
+const graphDetailsCls = css({
+    zIndex: 6,
 });
