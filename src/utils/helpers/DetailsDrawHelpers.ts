@@ -1,7 +1,7 @@
 import { TreeNode } from '../../components/types';
 import { selectDetailsContainerDiv, selectDetailsExitButtonWrapper, selectDetailsViewContainer, selectDetailsZoom } from './Selectors';
 import { ElementColors, FAST_TRANSITION_DURATION, ElementIds } from '../AppConsts';
-import { hierarchy, HierarchyPointNode, tree } from 'd3-hierarchy';
+import { hierarchy, HierarchyPointNode, tree, HierarchyPointLink } from 'd3-hierarchy';
 import { create, linkHorizontal, zoom, zoomIdentity, symbol, symbolCross } from 'd3';
 import { createZoom } from './DrawHelpers';
 import { changeZoom } from './GraphHelpers';
@@ -46,7 +46,7 @@ export function createDetailsViewContainer(width: number, height: number) {
         );
     createZoom(container, ElementIds.ZOOM_DETAILS);
     container.call(
-        zoom<any, any>().on('zoom', changeZoom(ElementIds.ZOOM_DETAILS)).transform,
+        zoom<SVGSVGElement, unknown>().on('zoom', changeZoom(ElementIds.ZOOM_DETAILS)).transform,
         // rough center screen on diagram's root node
         zoomIdentity.translate(-width / 5.3, -height / 2.65)
     );
@@ -59,10 +59,10 @@ interface TreeStructure {
 
 type TreeNodeWithVisitedFlag = TreeNode & { isVisited?: boolean };
 
-function mapNodeToTreeStructure(node: TreeNodeWithVisitedFlag, links: 'consumers' | 'providers'): TreeStructure {
+function mapNodeToTreeStructure(node: TreeNodeWithVisitedFlag, linksType: 'consumers' | 'providers'): TreeStructure {
     node.isVisited = true;
-    const UnvisitedLinks = node[links].filter((linkedNode: TreeNodeWithVisitedFlag) => !linkedNode.isVisited && linkedNode[links]);
-    const children = UnvisitedLinks.length > 0 ? UnvisitedLinks.map(nestedNode => mapNodeToTreeStructure(nestedNode, links)) : [];
+    const unvisitedLinks = node[linksType].filter((linkedNode: TreeNodeWithVisitedFlag) => !linkedNode.isVisited && linkedNode[linksType]);
+    const children = unvisitedLinks.map(nestedNode => mapNodeToTreeStructure(nestedNode, linksType));
     node.isVisited = undefined;
     return { name: node.name, children };
 }
@@ -121,7 +121,7 @@ function createDiagram(
         .join('path')
         .attr(
             'd',
-            linkHorizontal<any, any>()
+            linkHorizontal<HierarchyPointLink<TreeStructure>, HierarchyPointNode<TreeStructure>>()
                 .x(d => d.y)
                 .y(d => d.x)
         );
