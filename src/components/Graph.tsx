@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { css, cx } from 'emotion';
 import { draw } from '../utils/Draw';
-import { select } from 'd3-selection';
 import { Network } from './types';
 import { ElementIds } from '../utils/AppConsts';
+import { selectById } from '../utils/helpers/Selectors';
 
 export interface GraphProps {
     network: Network;
@@ -14,8 +14,11 @@ export const Graph = React.memo<GraphProps>(({ network: { nodes, links, detailsN
     const dependencyGraphDiv = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        select(dependencyGraphDiv.current)
-            .selectAll(`${ElementIds.OVERVIEW_CONTAINER_DIV} > *, ${ElementIds.DETAILS_CONTAINER_DIV} > *`)
+        selectById(ElementIds.OVERVIEW_CONTAINER_DIV)
+            .selectAll('*')
+            .remove();
+        selectById(ElementIds.DETAILS_CONTAINER_DIV)
+            .selectAll('*')
             .remove();
         if (dependencyGraphDiv.current !== null && nodes.length > 0) {
             draw({ nodes, links, detailsNodes }, dependencyGraphDiv.current);
