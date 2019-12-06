@@ -26,10 +26,11 @@ export const ZOOM_INCREASE = 1.25;
 export const ZOOM_DECREASE = 0.8;
 
 export enum LabelColors {
-    PROVIDER = '#00BFC2',
+    PROVIDER = '#00bfc2',
     CONSUMER = '#039881',
     PROVIDER_CONSUMER = '#03939F',
     DEFAULT = '#DCDEE0',
+    FOCUSED = '#4ca3e5',
 }
 
 export enum TextColors {

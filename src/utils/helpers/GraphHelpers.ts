@@ -253,7 +253,11 @@ export function areNodesConnected(a: DependencyNode, b: DependencyNode, links: D
 }
 
 export function getHighLightedLabelColor(node: DependencyNode) {
-    const { isConsumer, isProvider } = node;
+    const { isConsumer, isProvider, level } = node;
+
+    if (level === 1) {
+        return LabelColors.FOCUSED;
+    }
 
     if (isConsumer && isProvider) {
         return LabelColors.PROVIDER_CONSUMER;
