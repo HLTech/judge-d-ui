@@ -75,6 +75,16 @@ export function highlight(clickedNode: DependencyNode) {
     });
 }
 
+function getDefaultScaleValue(container: NodeSelection, dimension: ReturnType<typeof findGroupBackgroundDimension>) {
+    if (!dimension) {
+        return 1;
+    }
+    const width = Number(container.attr('width'));
+    const height = Number(container.attr('height'));
+
+    return Math.min(1.3, 0.9 / Math.max(dimension.width / width, dimension.height / height));
+}
+
 export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale?: number) {
     if (!dimension) {
         return;
@@ -85,7 +95,7 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
     const width = Number(svgContainer.attr('width'));
     const height = Number(svgContainer.attr('height'));
 
-    const scaleValue = scale || Math.min(1.3, 0.9 / Math.max(dimension.width / width, dimension.height / height));
+    const scaleValue = scale || getDefaultScaleValue(svgContainer, dimension);
 
     ZoomScaleStorage.setScale(scaleValue);
     svgContainer
@@ -113,19 +123,22 @@ export function hideHighlightBackground() {
         });
 }
 
-function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroundDimension>) {
+function getButtonDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale: number) {
     if (!dimension) {
-        return;
+        return {
+            buttonWidth: 0,
+            buttonHeight: 0,
+            buttonMarginBottom: 0,
+            buttonMarginRight: 0,
+            buttonX: 0,
+            buttonY: 0,
+            buttonRadius: 0,
+            buttonTextFontSize: 0,
+            buttonTextPositionX: 0,
+            buttonTextPositionY: 0,
+        };
     }
-    const highlightBackground = selectHighlightBackground();
-    const detailsButtonRectSelection = selectDetailsButtonRect();
-    const detailsButtonTextSelection = selectDetailsButtonText();
-
-    const scaleValue = ZoomScaleStorage.getScale();
-
-    const isBackgroundActive = highlightBackground.style('opacity') === String(BACKGROUND_HIGHLIGHT_OPACITY);
-
-    const scaleMultiplier = 1 / scaleValue;
+    const scaleMultiplier = 1 / scale;
 
     const buttonWidth = 100 * scaleMultiplier;
     const buttonHeight = 60 * scaleMultiplier;
@@ -137,6 +150,42 @@ function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroun
     const buttonTextFontSize = BASE_FONT_SIZE * scaleMultiplier;
     const buttonTextPositionX = dimension.x + dimension.width - buttonWidth / 2 - buttonMarginRight;
     const buttonTextPositionY = dimension.y + dimension.height - buttonHeight / 2 + 6 * scaleMultiplier - buttonMarginBottom;
+    return {
+        buttonWidth,
+        buttonHeight,
+        buttonMarginBottom,
+        buttonMarginRight,
+        buttonX,
+        buttonY,
+        buttonRadius,
+        buttonTextFontSize,
+        buttonTextPositionX,
+        buttonTextPositionY,
+    };
+}
+
+function showHighlightBackground(dimension: ReturnType<typeof findGroupBackgroundDimension>) {
+    if (!dimension) {
+        return;
+    }
+    const highlightBackground = selectHighlightBackground();
+    const detailsButtonRectSelection = selectDetailsButtonRect();
+    const detailsButtonTextSelection = selectDetailsButtonText();
+
+    const isBackgroundActive = highlightBackground.style('opacity') === String(BACKGROUND_HIGHLIGHT_OPACITY);
+
+    const scale = ZoomScaleStorage.getScale();
+
+    const {
+        buttonWidth,
+        buttonHeight,
+        buttonX,
+        buttonY,
+        buttonRadius,
+        buttonTextFontSize,
+        buttonTextPositionX,
+        buttonTextPositionY,
+    } = getButtonDimension(dimension, scale);
 
     const elementsNextAttributes = [
         {
@@ -334,10 +383,19 @@ export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
     let rightLimitNode = nodesGroup[0];
 
     nodesGroup.forEach((node: DependencyNode) => {
-        if (!node.x || !node.y || !rightLimitNode.x || !leftLimitNode.x || !upperLimitNode.y || !lowerLimitNode.y) {
+        if (
+            !node.x ||
+            !node.y ||
+            !node.width ||
+            !rightLimitNode.x ||
+            !rightLimitNode.width ||
+            !leftLimitNode.x ||
+            !upperLimitNode.y ||
+            !lowerLimitNode.y
+        ) {
             return;
         }
-        if (node.x > rightLimitNode.x) {
+        if (node.x + node.width > rightLimitNode.x + rightLimitNode.width) {
             rightLimitNode = node;
         }
 
@@ -356,13 +414,23 @@ export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
 
     const upperLimitWithOffset = upperLimitNode.y ? upperLimitNode.y - 50 : 0;
     const leftLimitWithOffset = leftLimitNode.x ? leftLimitNode.x - 100 : 0;
-    const width = rightLimitNode.x && rightLimitNode.width ? rightLimitNode.x + rightLimitNode.width + 50 - leftLimitWithOffset : 0;
-    const height = lowerLimitNode.y ? lowerLimitNode.y! + 100 - upperLimitWithOffset : 0;
+    const width = rightLimitNode.x && rightLimitNode.width ? rightLimitNode.x + rightLimitNode.width - leftLimitWithOffset : 0;
+    const height = lowerLimitNode.y ? lowerLimitNode.y - upperLimitWithOffset : 0;
 
-    return {
+    const dimension = {
         x: leftLimitWithOffset,
         y: upperLimitWithOffset,
         width,
         height,
     };
+
+    const container = selectContainer();
+
+    const scale = getDefaultScaleValue(container, dimension);
+
+    const { buttonHeight, buttonMarginBottom } = getButtonDimension(dimension, scale);
+
+    dimension.height += buttonHeight + buttonMarginBottom * 4;
+
+    return dimension;
 }
