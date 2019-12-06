@@ -45,6 +45,11 @@ export function createDetailsViewContainer(width: number, height: number) {
                 .size(20)
         );
     createZoom(container, ElementIds.ZOOM_DETAILS);
+}
+
+function resetZoomPosition(width: number, height: number) {
+    const container = selectDetailsViewContainer();
+
     container.call(
         zoom<SVGSVGElement, unknown>().on('zoom', changeZoom(ElementIds.ZOOM_DETAILS)).transform,
         // rough center screen on diagram's root node
@@ -154,7 +159,7 @@ function transformDiagramElement(xOffset: number, yOffset: number, drawToLeft: b
 }
 
 function createDiagrams(
-    container: ReturnType<typeof selectDetailsViewContainer>,
+    container: ReturnType<typeof selectDetailsZoom>,
     consumersData: TreeStructure,
     providersData: TreeStructure,
     width: number,
@@ -189,9 +194,15 @@ export function initializeDetailsView(node: TreeNode) {
     const height = Number(detailsViewContainer.attr('height'));
 
     const detailsZoom = selectDetailsZoom();
-
     createDiagrams(detailsZoom, consumerNodes, providerNodes, width, height);
     switchDetailsVisibility();
+
+    const detailsContainerDiv = selectDetailsContainerDiv().node();
+    const { width: containerWidth, height: containerHeight } = detailsContainerDiv
+        ? detailsContainerDiv.getBoundingClientRect()
+        : { width: 0, height: 0 };
+
+    resetZoomPosition(containerWidth, containerHeight);
 }
 
 export function shutdownDetailsView() {
