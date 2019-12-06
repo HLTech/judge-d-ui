@@ -28,21 +28,21 @@ export const ZOOM_DECREASE = 0.8;
 export enum LabelColors {
     PROVIDER = '#00bfc2',
     CONSUMER = '#039881',
-    PROVIDER_CONSUMER = '#03939F',
-    DEFAULT = '#DCDEE0',
+    PROVIDER_CONSUMER = '#03939f',
+    DEFAULT = '#dcdee0',
     FOCUSED = '#4ca3e5',
 }
 
 export enum TextColors {
-    HIGHLIGHTED = '#FFFFFF',
-    DEFAULT = '#5E6063',
+    HIGHLIGHTED = '#ffffff',
+    DEFAULT = '#5e6063',
 }
 
 export enum ElementColors {
     BUTTON = '#858789',
-    HIGHLIGHT_BACKGROUND = '#EDEEF0',
-    SLIDER = '#BABEC2',
-    SLIDER_LABEL = '#8B8B8C',
-    DETAILS_BACKGROUND = '#FFFFFF',
-    DETAILS_LINK = '#0076EB',
+    HIGHLIGHT_BACKGROUND = '#edeef0',
+    SLIDER = '#babec2',
+    SLIDER_LABEL = '#8b8b8c',
+    DETAILS_BACKGROUND = '#ffffff',
+    DETAILS_LINK = '#0076eb',
 }
