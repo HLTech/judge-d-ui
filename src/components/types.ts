@@ -48,4 +48,4 @@ export interface ServiceCommunication {
     };
 }
 
-export type NodeSelection<T extends BaseType> = Selection<T, any, Element, HTMLElement>;
+export type NodeSelection<T extends BaseType = BaseType> = Selection<T, any, Element, HTMLElement>;
