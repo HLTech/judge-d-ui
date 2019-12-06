@@ -16,7 +16,7 @@ export const DependencyGraph: React.FC = () => {
     const [services, setServices] = useState<Service[]>([]);
     const [env, setEnv] = useState<string>('');
     const [environments, setEnvironments] = useState<string[]>([]);
-    const [showOnlyConnectedNodes, setShowOnlyConnectedNodes] = useState<boolean | undefined>(false);
+    const [areOnlyConnectedNodesShown, setAreOnlyConnectedNodesShown] = useState<boolean>(false);
 
     const graphNetwork: Network = useMemo(() => createNetworkFromServices(services), [services]);
     const onlyNodesWithContracts = useMemo(() => filterConnectedNodes(graphNetwork), [graphNetwork]);
@@ -50,22 +50,23 @@ export const DependencyGraph: React.FC = () => {
         }
     }, [env]);
 
-    const handleViewSwitchChange = (e: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => setShowOnlyConnectedNodes(data.checked);
+    const handleViewSwitchChange = (e: React.FormEvent<HTMLInputElement>, data: CheckboxProps) =>
+        setAreOnlyConnectedNodesShown(Boolean(data.checked));
 
     useEffect(() => {
-        if (showOnlyConnectedNodes) {
+        if (areOnlyConnectedNodesShown) {
             setNodes(onlyNodesWithContracts);
         } else {
             setNodes(graphNetwork.nodes);
         }
-    }, [showOnlyConnectedNodes, onlyNodesWithContracts, graphNetwork]);
+    }, [areOnlyConnectedNodesShown, onlyNodesWithContracts, graphNetwork]);
 
     return (
         <>
             <div className={optionsCls}>
                 <h1 className={headerCls}>Judge-Dredd UI</h1>
                 {process.env.NODE_ENV === 'development' && (
-                    <Radio onChange={handleViewSwitchChange} toggle checked={showOnlyConnectedNodes} />
+                    <Radio onChange={handleViewSwitchChange} toggle checked={areOnlyConnectedNodesShown} />
                 )}
 
                 <EnvironmentSelect disabled={isPending} options={environments} env={env} onEnvironmentChange={setEnv} />
