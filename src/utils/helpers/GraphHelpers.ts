@@ -1,5 +1,5 @@
 import { DependencyLink, DependencyNode, NodeSelection } from '../../components/types';
-import { event, select, selectAll } from 'd3-selection';
+import { event, select, selectAll, BaseType } from 'd3-selection';
 import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
@@ -75,7 +75,7 @@ export function highlight(clickedNode: DependencyNode) {
     });
 }
 
-function getDefaultScaleValue(container: NodeSelection, dimension: ReturnType<typeof findGroupBackgroundDimension>) {
+function getDefaultScaleValue<T extends BaseType>(container: NodeSelection<T>, dimension: ReturnType<typeof findGroupBackgroundDimension>) {
     if (!dimension) {
         return 1;
     }
