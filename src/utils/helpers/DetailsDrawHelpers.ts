@@ -47,7 +47,10 @@ export function createDetailsViewContainer(width: number, height: number) {
     createZoom(container, ElementIds.ZOOM_DETAILS);
 }
 
-function resetZoomPosition(width: number, height: number) {
+function resetZoomPosition() {
+    const detailsContainerDiv = selectDetailsContainerDiv().node();
+    const { width, height } = detailsContainerDiv ? detailsContainerDiv.getBoundingClientRect() : { width: 0, height: 0 };
+
     const container = selectDetailsViewContainer();
 
     container.call(
@@ -197,12 +200,7 @@ export function initializeDetailsView(node: TreeNode) {
     createDiagrams(detailsZoom, consumerNodes, providerNodes, width, height);
     switchDetailsVisibility();
 
-    const detailsContainerDiv = selectDetailsContainerDiv().node();
-    const { width: containerWidth, height: containerHeight } = detailsContainerDiv
-        ? detailsContainerDiv.getBoundingClientRect()
-        : { width: 0, height: 0 };
-
-    resetZoomPosition(containerWidth, containerHeight);
+    resetZoomPosition();
 }
 
 export function shutdownDetailsView() {
