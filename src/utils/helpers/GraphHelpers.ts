@@ -79,10 +79,13 @@ function getDefaultScaleValue<T extends BaseType>(container: NodeSelection<T>, d
     if (!dimension) {
         return 1;
     }
-    const width = Number(container.attr('width'));
-    const height = Number(container.attr('height'));
+    const containerWidth = Number(container.attr('width'));
+    const containerHeight = Number(container.attr('height'));
 
-    return Math.min(1.3, 0.9 / Math.max(dimension.width / width, dimension.height / height));
+    const maxScaleValue = 1.3;
+    const dimensionToContainerSizeRatio = Math.max(dimension.width / containerWidth, dimension.height / containerHeight);
+
+    return Math.min(maxScaleValue, 0.9 / dimensionToContainerSizeRatio);
 }
 
 export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBackgroundDimension>, scale?: number) {
