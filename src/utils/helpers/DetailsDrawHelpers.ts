@@ -1,10 +1,16 @@
-import { TreeNode } from '../../components/types';
-import { selectDetailsContainerDiv, selectDetailsExitButtonWrapper, selectDetailsViewContainer, selectDetailsZoom } from './Selectors';
-import { ElementColors, FAST_TRANSITION_DURATION, ElementIds } from '../AppConsts';
+import { NodeSelection, TreeNode } from '../../components/types';
+import {
+    selectById,
+    selectDetailsContainerDiv,
+    selectDetailsExitButtonWrapper,
+    selectDetailsViewContainer,
+    selectDetailsZoom,
+} from './Selectors';
+import { ElementColors, FAST_TRANSITION_DURATION, ElementIds, LabelColors, TextColors } from '../AppConsts';
 import { hierarchy, HierarchyPointNode, tree, HierarchyPointLink } from 'd3-hierarchy';
 import { create, linkHorizontal, zoom, zoomIdentity, symbol, symbolCross } from 'd3';
-import { createZoom } from './DrawHelpers';
-import { changeZoom } from './GraphHelpers';
+import { createLabelPath, createZoom } from './DrawHelpers';
+import { changeZoom, getLabelTextDimensions } from './GraphHelpers';
 
 export function createDetailsViewContainer(width: number, height: number) {
     const containerWidth = width * 4;
@@ -58,6 +64,42 @@ function resetZoomPosition() {
         // rough center screen on diagram's root node
         zoomIdentity.translate(-width / 5.3, -height / 2.65)
     );
+}
+
+// these magic numbers(-30, -36.5) are dependant of how node labels are painted relative to label text
+const labelPathWidthOffset = -30;
+const labelPathHeightOffset = -36.5;
+
+async function createRootNode(
+    container: NodeSelection<any>,
+    viewboxWidth: number,
+    viexboxHeight: number,
+    rootNodeName: string,
+    isConsumer: boolean,
+    isProvider: boolean
+) {
+    const nodeContainer = container
+        .append('svg')
+        .attr('id', ElementIds.DETAILS_ROOT_NODE_CONTAINER)
+        // hard-coded magic numbers that translates root node to position of root of the tree graphs
+        .attr('viewBox', `-${viewboxWidth / 3.2} -${viexboxHeight / 2} ${viewboxWidth} ${viexboxHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet');
+    const label = nodeContainer.append('path').attr('fill', LabelColors.FOCUSED);
+    const text = nodeContainer
+        .append('text')
+        .attr('text-anchor', 'middle')
+        .attr('fill', TextColors.HIGHLIGHTED)
+        .text(rootNodeName);
+    await delayPromise(0);
+    const { height, x, y } = getLabelTextDimensions(text.node()) || { width: 0, height: 0, x: 0, y: 0 };
+    const labelPath = createLabelPath.call(text.node(), isConsumer, isProvider);
+    label.attr('d', labelPath).attr('transform', `translate(${x + labelPathWidthOffset}, ${y + labelPathHeightOffset})`);
+    // center text vertically on label
+    text.attr('y', y + height + 2);
+}
+
+function delayPromise(delay: number = 0) {
+    return new Promise(resolve => setTimeout(resolve, delay));
 }
 
 interface TreeStructure {
@@ -154,20 +196,23 @@ function createDiagram(
         .attr('stroke-width', 4)
         .attr('stroke', 'white');
 
-    return svg.node();
+    return svg;
 }
 
 function transformDiagramElement(xOffset: number, yOffset: number, drawToLeft: boolean) {
     return `translate(${xOffset},${yOffset}) ${drawToLeft ? 'rotate(180)' : ''}`;
 }
 
-function createDiagrams(
+async function createDiagrams(
     container: ReturnType<typeof selectDetailsZoom>,
     consumersData: TreeStructure,
     providersData: TreeStructure,
     width: number,
     height: number
 ) {
+    const rootNodeName = consumersData.name || providersData.name;
+    consumersData.name = '';
+    providersData.name = '';
     const consumersTree = createTree(consumersData);
     const providersTree = createTree(providersData);
 
@@ -179,13 +224,29 @@ function createDiagrams(
     const consumersDiagram = createDiagram(consumersTree, width, height, rootNodeYOffset, true);
     const providersDiagram = createDiagram(providersTree, width, height, rootNodeYOffset);
 
-    if (providersDiagram) {
-        container.append<SVGSVGElement>(() => providersDiagram);
+    await createRootNode(container, width, height, rootNodeName, Boolean(providersDiagram), Boolean(consumersDiagram));
+
+    const detailsRootNodeContainer = selectById(ElementIds.DETAILS_ROOT_NODE_CONTAINER);
+    const detailsRootNodeBBox = detailsRootNodeContainer.node()
+        ? (detailsRootNodeContainer.node() as SVGSVGElement).getBBox()
+        : { width: 0, x: 0 };
+
+    const providersDiagramNode = providersDiagram?.node();
+    const consumersDiagramNode = consumersDiagram?.node();
+
+    const xOffsetFromRootNodeCenter = detailsRootNodeBBox.width / 7;
+
+    if (providersDiagramNode) {
+        providersDiagram?.attr('x', xOffsetFromRootNodeCenter);
+        container.append<SVGSVGElement>(() => providersDiagramNode);
     }
 
-    if (consumersDiagram) {
-        container.append<SVGSVGElement>(() => consumersDiagram);
+    if (consumersDiagramNode) {
+        consumersDiagram?.attr('x', -xOffsetFromRootNodeCenter);
+        container.append<SVGSVGElement>(() => consumersDiagramNode);
     }
+
+    detailsRootNodeContainer.raise();
 }
 
 export function initializeDetailsView(node: TreeNode) {

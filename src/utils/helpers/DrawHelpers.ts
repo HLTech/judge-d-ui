@@ -27,7 +27,9 @@ export function createLabels(labelNodesGroup: NodeSelection<SVGGElement>, nodes:
         .append<SVGPathElement>('svg:path')
         .attr('class', 'label')
         .attr('fill', LabelColors.DEFAULT)
-        .attr('d', createLabelPath);
+        .attr('d', function({ isConsumer, isProvider }) {
+            return createLabelPath.call(this, isConsumer, isProvider);
+        });
 }
 
 export function createTextElements(labelNodesGroup: NodeSelection<SVGGElement>, nodes: DependencyNode[]) {
@@ -142,7 +144,7 @@ export function createLinkPath(this: Element, link: DependencyLink): void {
         .attr('stroke', LabelColors.DEFAULT);
 }
 
-export function createLabelPath(this: Node, node: DependencyNode) {
+export function createLabelPath(this: Node | null, isConsumer: boolean, isProvider: boolean) {
     const labelTextDimensions = getLabelTextDimensions(this);
 
     if (!labelTextDimensions) {
@@ -150,8 +152,6 @@ export function createLabelPath(this: Node, node: DependencyNode) {
     }
 
     const labelTextWidth = labelTextDimensions.width;
-
-    const { isConsumer, isProvider } = node;
 
     if (isConsumer && isProvider) {
         return 'M4.5,35l9.37,14.59L4.5,64.18h' + (labelTextWidth + 45) + 'l9-14.59L' + (labelTextWidth + 49.5) + ',35H4.5z';

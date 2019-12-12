@@ -10,6 +10,7 @@ export enum ElementIds {
     OVERVIEW_CONTAINER_DIV = 'overview-container-div',
     DETAILS_CONTAINER_DIV = 'details-container-div',
     DETAILS_EXIT_BUTTON = 'details-exit-button',
+    DETAILS_ROOT_NODE_CONTAINER = 'details-root-node-container',
     TOOLTIP = 'tooltip',
 }
 
