@@ -10,7 +10,7 @@ jobs:
         - stage: Tests
           script: yarn test
         - stage: build & publish docker image for server
-          if: branch = master
+          if: branch = master AND NOT type IN (pull_request)
           script:
               - yarn build
               - echo "Building docker image"
@@ -23,6 +23,6 @@ jobs:
               - docker tag hltech/judge-d-ui registry.heroku.com/judge-d-ui/web
               - docker push registry.heroku.com/judge-d-ui/web
         - stage: release app in heroku
-          if: branch = master
+          if: branch = master AND NOT type IN (pull_request)
           script:
               - heroku container:release web -a judge-d-ui
