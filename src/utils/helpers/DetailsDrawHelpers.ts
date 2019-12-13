@@ -81,6 +81,7 @@ async function createRootNode(
     const nodeContainer = container
         .append('svg')
         .attr('id', ElementIds.DETAILS_ROOT_NODE_CONTAINER)
+        .attr('font-size', 15)
         // hard-coded magic numbers that translates root node to position of root of the tree graphs
         .attr('viewBox', `-${viewboxWidth / 3.2} -${viexboxHeight / 2} ${viewboxWidth} ${viexboxHeight}`)
         .attr('preserveAspectRatio', 'xMidYMid meet');
@@ -95,7 +96,7 @@ async function createRootNode(
     const labelPath = createLabelPath.call(text.node(), isConsumer, isProvider);
     label.attr('d', labelPath).attr('transform', `translate(${x + labelPathWidthOffset}, ${y + labelPathHeightOffset})`);
     // center text vertically on label
-    text.attr('y', y + height + 2);
+    text.attr('y', y + height + 1);
 }
 
 function delayPromise(delay: number = 0) {
