@@ -1,4 +1,4 @@
-import { DependencyLink, DependencyNode, NodeSelection } from '../../components/types';
+import { DependencyLink, DependencyNode, NodeSelection, RenderedDependencyNode } from '../../components/types';
 import { event, select, selectAll, BaseType } from 'd3-selection';
 import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
@@ -377,29 +377,25 @@ export const changeZoom = (zoomSelector: ElementIds.OVERVIEW_ZOOM | ElementIds.D
     ZoomScaleStorage.setScale(transform.k);
 };
 
+export function getRenderedNodes(nodes: DependencyNode[]): RenderedDependencyNode[] {
+    return nodes.filter(
+        (node): node is RenderedDependencyNode =>
+            node.x !== undefined && node.y !== undefined && node.width !== undefined && node.height !== undefined
+    );
+}
+
 export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
-    if (nodesGroup.length === 0) {
+    const renderedNodes = getRenderedNodes(nodesGroup);
+    if (renderedNodes.length === 0) {
         return;
     }
 
-    let upperLimitNode = nodesGroup[0];
-    let lowerLimitNode = nodesGroup[0];
-    let leftLimitNode = nodesGroup[0];
-    let rightLimitNode = nodesGroup[0];
+    let upperLimitNode = renderedNodes[0];
+    let lowerLimitNode = renderedNodes[0];
+    let leftLimitNode = renderedNodes[0];
+    let rightLimitNode = renderedNodes[0];
 
-    nodesGroup.forEach((node: DependencyNode) => {
-        if (
-            !node.x ||
-            !node.y ||
-            !node.width ||
-            !rightLimitNode.x ||
-            !rightLimitNode.width ||
-            !leftLimitNode.x ||
-            !upperLimitNode.y ||
-            !lowerLimitNode.y
-        ) {
-            return;
-        }
+    renderedNodes.forEach(node => {
         if (node.x + node.width > rightLimitNode.x + rightLimitNode.width) {
             rightLimitNode = node;
         }
