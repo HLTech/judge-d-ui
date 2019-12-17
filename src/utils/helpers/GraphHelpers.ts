@@ -378,10 +378,7 @@ export const changeZoom = (zoomSelector: ElementIds.OVERVIEW_ZOOM | ElementIds.D
 };
 
 export function getRenderedNodes(nodes: DependencyNode[]): RenderedDependencyNode[] {
-    return nodes.filter(
-        (node): node is RenderedDependencyNode =>
-            node.x !== undefined && node.y !== undefined && node.width !== undefined && node.height !== undefined
-    );
+    return nodes.filter((node): node is RenderedDependencyNode => node.x !== undefined && node.y !== undefined && node.width !== undefined);
 }
 
 export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
