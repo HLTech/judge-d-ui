@@ -4,12 +4,12 @@ import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { BACKGROUND_HIGHLIGHT_OPACITY, BASE_FONT_SIZE, LabelColors, ElementIds, TextColors, TRANSITION_DURATION } from '../AppConsts';
-import { ZoomScaleStorage } from './UserEventHelpers';
+import { removeTooltipOnNodeHoverSubscription, subscribeToShowTooltipOnNodeHover, ZoomScaleStorage } from './UserEventHelpers';
 import {
     selectAllLinks,
     selectAllNodes,
     selectById,
-    selectContainer,
+    selectOverviewContainer,
     selectDetailsButtonRect,
     selectDetailsButtonText,
     selectDetailsButtonWrapper,
@@ -93,7 +93,7 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
         return;
     }
 
-    const svgContainer = selectContainer();
+    const svgContainer = selectOverviewContainer();
 
     const width = Number(svgContainer.attr('width'));
     const height = Number(svgContainer.attr('height'));
@@ -333,6 +333,7 @@ export function handleDrag(simulation: Simulation<DependencyNode, DependencyLink
             if (!selectHighLightedNodes().data().length) {
                 dragStarted(node, simulation);
                 isDragStarted = true;
+                removeTooltipOnNodeHoverSubscription();
             }
         })
         .on('drag', (node: DependencyNode) => {
@@ -343,6 +344,7 @@ export function handleDrag(simulation: Simulation<DependencyNode, DependencyLink
         .on('end', (node: DependencyNode) => {
             dragEnded(node, simulation);
             isDragStarted = false;
+            subscribeToShowTooltipOnNodeHover();
         });
 }
 
@@ -427,7 +429,7 @@ export function findGroupBackgroundDimension(nodesGroup: DependencyNode[]) {
         height,
     };
 
-    const container = selectContainer();
+    const container = selectOverviewContainer();
 
     const scale = getDefaultScaleValue(container, dimension);
 

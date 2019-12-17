@@ -76,7 +76,7 @@ export function createSimulation(nodes: DependencyNode[], links: DependencyLink[
 export function createSVGContainer(width: number, height: number) {
     return selectById(ElementIds.OVERVIEW_CONTAINER_DIV)
         .append('svg')
-        .attr('id', ElementIds.CONTAINER)
+        .attr('id', ElementIds.OVERVIEW_CONTAINER)
         .attr('preserveAspectRatio', 'xMidYMid meet')
         .attr('viewBox', `0 0 ${width} ${height}`)
         .attr('width', width)

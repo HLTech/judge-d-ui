@@ -18,6 +18,7 @@ import {
     subscribeToHighlight,
     subscribeToOpenDetails,
     subscribeToResetHighlight,
+    subscribeToShowTooltipOnNodeHover,
     subscribeToZoomOnArrowKey,
 } from './helpers/UserEventHelpers';
 import { createDetailsViewContainer } from './helpers/DetailsDrawHelpers';
@@ -52,6 +53,7 @@ export const draw = (network: Network, container: HTMLDivElement) => {
     subscribeToZoomOnArrowKey();
     subscribeToOpenDetails(detailsNodes);
     subscribeToCloseDetails();
+    subscribeToShowTooltipOnNodeHover();
 
     simulation.on('tick', () => {
         linkElements.each(createLinkPath);

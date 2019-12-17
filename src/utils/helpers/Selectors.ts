@@ -49,8 +49,16 @@ export function selectDetailsZoom() {
     return selectById<SVGGElement>(ElementIds.ZOOM_DETAILS);
 }
 
-export function selectContainer() {
-    return selectById<SVGSVGElement>(ElementIds.CONTAINER);
+export function selectOverviewZoom() {
+    return selectById<SVGGElement>(ElementIds.ZOOM_OVERVIEW);
+}
+
+export function selectOverviewContainer() {
+    return selectById<SVGSVGElement>(ElementIds.OVERVIEW_CONTAINER);
+}
+
+export function selectTooltip() {
+    return selectById<SVGGElement>(ElementIds.TOOLTIP);
 }
 
 export function selectById<Type extends BaseType = BaseType, Data = unknown>(selector: ElementIds) {
