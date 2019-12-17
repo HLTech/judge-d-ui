@@ -15,11 +15,10 @@ const nodeWithPositionAndSize: RenderedDependencyNode = {
     x: 0,
     y: 0,
     width: 0,
-    height: 0,
 };
 
 describe('getRenderedNodes', () => {
-    it('should filter nodes that dont have x, y, width or height props', () => {
+    it('should filter nodes that dont have x, y or width props', () => {
         const nodeWithoutX: DependencyNode = {
             ...nodeWithPositionAndSize,
             x: undefined,
@@ -32,11 +31,7 @@ describe('getRenderedNodes', () => {
             ...nodeWithPositionAndSize,
             width: undefined,
         };
-        const nodeWithoutHeight: DependencyNode = {
-            ...nodeWithPositionAndSize,
-            height: undefined,
-        };
-        const inputArray = [nodeWithoutX, nodeWithoutY, nodeWithoutWidth, nodeWithoutHeight, nodeWithPositionAndSize];
+        const inputArray = [nodeWithoutX, nodeWithoutY, nodeWithoutWidth, nodeWithPositionAndSize];
         expect(getRenderedNodes(inputArray)).toEqual([nodeWithPositionAndSize]);
     });
 });
