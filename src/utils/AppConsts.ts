@@ -1,5 +1,5 @@
 export enum ElementIds {
-    CONTAINER = 'container',
+    OVERVIEW_CONTAINER = 'overview-container',
     LABELS = 'labels',
     LINKS = 'links',
     HIGHLIGHT_BACKGROUND = 'highlight-background',
@@ -10,6 +10,7 @@ export enum ElementIds {
     OVERVIEW_CONTAINER_DIV = 'overview-container-div',
     DETAILS_CONTAINER_DIV = 'details-container-div',
     DETAILS_EXIT_BUTTON = 'details-exit-button',
+    TOOLTIP = 'tooltip',
 }
 
 export const TRANSITION_DURATION = 750;

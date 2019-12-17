@@ -10,14 +10,27 @@ import {
     highlight,
     zoomToHighLightedNodes,
 } from './GraphHelpers';
-import { LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, ElementIds, TextColors, ZOOM_DECREASE, ZOOM_INCREASE } from '../AppConsts';
+import {
+    LabelColors,
+    MAXIMUM_ZOOM_SCALE,
+    MINIMUM_ZOOM_SCALE,
+    ElementIds,
+    TextColors,
+    ZOOM_DECREASE,
+    ZOOM_INCREASE,
+    ElementColors,
+    FAST_TRANSITION_DURATION,
+    TRANSITION_DURATION,
+} from '../AppConsts';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import {
     selectAllNodes,
-    selectContainer,
+    selectOverviewContainer,
     selectDetailsButtonWrapper,
     selectDetailsExitButtonWrapper,
     selectHighLightedNodes,
+    selectOverviewZoom,
+    selectTooltip,
 } from './Selectors';
 import { initializeDetailsView, shutdownDetailsView } from './DetailsDrawHelpers';
 
@@ -28,6 +41,8 @@ enum Subscriptions {
     ZOOM_ON_ARROW_KEY = 'keydown.zoom',
     OPEN_DETAILS = 'click.openDetails',
     CLOSE_DETAILS = 'click.closeDetails',
+    SHOW_TOOLTIP = 'mouseover.tooltip',
+    HIDE_TOOLTIP = 'mouseout.tooltip',
 }
 
 export function subscribeToHighlight() {
@@ -88,7 +103,7 @@ export function subscribeToChangeHighlightRangeOnArrowKey() {
 }
 
 export function subscribeToResetHighlight() {
-    selectContainer().on(Subscriptions.RESET_HIGHLIGHT, () => {
+    selectOverviewContainer().on(Subscriptions.RESET_HIGHLIGHT, () => {
         const highlightedNodes = selectHighLightedNodes();
         if (highlightedNodes.data().length) {
             selectAllNodes().each((node: DependencyNode) => (node.level = 0));
@@ -122,7 +137,7 @@ export function subscribeToZoomOnArrowKey() {
                 const newScaleValue = currentScaleValue * ZOOM_INCREASE;
                 if (newScaleValue <= MAXIMUM_ZOOM_SCALE) {
                     ZoomScaleStorage.setScale(newScaleValue);
-                    const container = selectContainer();
+                    const container = selectOverviewContainer();
                     container.call(() => {
                         return zoom<any, any>()
                             .on('zoom', changeZoom(ElementIds.ZOOM_OVERVIEW))
@@ -136,7 +151,7 @@ export function subscribeToZoomOnArrowKey() {
                 const newScaleValue = currentScaleValue * ZOOM_DECREASE;
                 if (newScaleValue >= MINIMUM_ZOOM_SCALE) {
                     ZoomScaleStorage.setScale(newScaleValue);
-                    const container = selectContainer();
+                    const container = selectOverviewContainer();
                     container.call(() => {
                         return zoom<any, any>()
                             .on('zoom', changeZoom(ElementIds.ZOOM_OVERVIEW))
@@ -171,6 +186,50 @@ export function subscribeToCloseDetails() {
     selectDetailsExitButtonWrapper().on(Subscriptions.CLOSE_DETAILS, () => {
         shutdownDetailsView();
     });
+}
+
+const TOOLTIP_PADDING = 10;
+
+export function subscribeToShowTooltipOnNodeHover() {
+    const tooltipElement = selectOverviewZoom()
+        .append('g')
+        .attr('id', 'tooltip')
+        .style('opacity', 0);
+    const tooltipBackground = tooltipElement
+        .append('rect')
+        .attr('fill', ElementColors.BUTTON)
+        .attr('rx', 5)
+        .attr('ry', 5);
+    const tooltipText = tooltipElement.append('text').attr('fill', TextColors.HIGHLIGHTED);
+
+    selectAllNodes()
+        .on(Subscriptions.SHOW_TOOLTIP, function(node) {
+            const { x = 0, y = 0 } = node;
+            tooltipElement
+                .transition()
+                .duration(FAST_TRANSITION_DURATION)
+                .style('opacity', 0.9);
+            tooltipText
+                .text(node.version)
+                .attr('x', x)
+                .attr('y', y - 25 - TOOLTIP_PADDING);
+            const { width, height } = tooltipText.node() ? tooltipText.node()!.getBBox() : { width: 0, height: 0 };
+            tooltipBackground
+                .attr('x', x - TOOLTIP_PADDING)
+                .attr('y', y - 42 - TOOLTIP_PADDING)
+                .attr('width', width + 2 * TOOLTIP_PADDING)
+                .attr('height', height + TOOLTIP_PADDING);
+        })
+        .on(Subscriptions.HIDE_TOOLTIP, function() {
+            tooltipElement
+                .transition()
+                .duration(TRANSITION_DURATION)
+                .style('opacity', 0);
+        });
+}
+
+export function removeTooltipOnNodeHoverSubscription() {
+    selectTooltip().remove();
 }
 
 class LevelStorage {
