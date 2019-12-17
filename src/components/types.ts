@@ -18,6 +18,13 @@ export interface DependencyNode extends SimulationNodeDatum {
     level: number;
 }
 
+export interface RenderedDependencyNode extends DependencyNode {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
 export interface DependencyLink extends SimulationLinkDatum<DependencyNode> {
     source: DependencyNode;
     target: DependencyNode;
