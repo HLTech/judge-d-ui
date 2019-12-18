@@ -105,7 +105,7 @@ export function centerScreenToDimension(dimension: ReturnType<typeof findGroupBa
         .transition()
         .duration(TRANSITION_DURATION)
         .call(
-            zoom<any, any>().on('zoom', changeZoom(ElementIds.ZOOM_OVERVIEW)).transform,
+            zoom<any, any>().on('zoom', changeZoom(ElementIds.OVERVIEW_ZOOM)).transform,
             zoomIdentity
                 .translate(width / 2, height / 2)
                 .scale(scaleValue)
@@ -369,7 +369,7 @@ function dragEnded(node: DependencyNode, simulation: Simulation<DependencyNode, 
     node.fy = null;
 }
 
-export const changeZoom = (zoomSelector: ElementIds.ZOOM_OVERVIEW | ElementIds.ZOOM_DETAILS) => () => {
+export const changeZoom = (zoomSelector: ElementIds.OVERVIEW_ZOOM | ElementIds.DETAILS_ZOOM) => () => {
     const { transform } = event;
     const zoomLayer = selectById(zoomSelector);
     zoomLayer.attr('transform', transform);

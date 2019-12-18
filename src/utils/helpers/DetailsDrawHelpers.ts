@@ -44,7 +44,7 @@ export function createDetailsViewContainer(width: number, height: number) {
                 .type(symbolCross)
                 .size(20)
         );
-    createZoom(container, ElementIds.ZOOM_DETAILS);
+    createZoom(container, ElementIds.DETAILS_ZOOM);
 }
 
 function resetZoomPosition() {
@@ -54,7 +54,7 @@ function resetZoomPosition() {
     const container = selectDetailsViewContainer();
 
     container.call(
-        zoom<SVGSVGElement, unknown>().on('zoom', changeZoom(ElementIds.ZOOM_DETAILS)).transform,
+        zoom<SVGSVGElement, unknown>().on('zoom', changeZoom(ElementIds.DETAILS_ZOOM)).transform,
         // rough center screen on diagram's root node
         zoomIdentity.translate(-width / 5.3, -height / 2.65)
     );

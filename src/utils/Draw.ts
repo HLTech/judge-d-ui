@@ -31,7 +31,7 @@ export const draw = (network: Network, container: HTMLDivElement) => {
 
     const simulation = createSimulation(nodes, links, width, height);
     const svgContainer = createSVGContainer(width, height);
-    const zoomLayer = createZoom(svgContainer, ElementIds.ZOOM_OVERVIEW);
+    const zoomLayer = createZoom(svgContainer, ElementIds.OVERVIEW_ZOOM);
 
     createMarkers(svgContainer);
 

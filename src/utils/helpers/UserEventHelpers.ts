@@ -140,7 +140,7 @@ export function subscribeToZoomOnArrowKey() {
                     const container = selectOverviewContainer();
                     container.call(() => {
                         return zoom<any, any>()
-                            .on('zoom', changeZoom(ElementIds.ZOOM_OVERVIEW))
+                            .on('zoom', changeZoom(ElementIds.OVERVIEW_ZOOM))
                             .scaleBy(container, ZOOM_INCREASE);
                     }, zoomIdentity);
                 }
@@ -154,7 +154,7 @@ export function subscribeToZoomOnArrowKey() {
                     const container = selectOverviewContainer();
                     container.call(() => {
                         return zoom<any, any>()
-                            .on('zoom', changeZoom(ElementIds.ZOOM_OVERVIEW))
+                            .on('zoom', changeZoom(ElementIds.OVERVIEW_ZOOM))
                             .scaleBy(container, ZOOM_DECREASE);
                     }, zoomIdentity);
                 }
