@@ -46,11 +46,11 @@ export function selectDetailsContainerDiv() {
 }
 
 export function selectDetailsZoom() {
-    return selectById<SVGGElement>(ElementIds.ZOOM_DETAILS);
+    return selectById<SVGGElement>(ElementIds.DETAILS_ZOOM);
 }
 
 export function selectOverviewZoom() {
-    return selectById<SVGGElement>(ElementIds.ZOOM_OVERVIEW);
+    return selectById<SVGGElement>(ElementIds.OVERVIEW_ZOOM);
 }
 
 export function selectOverviewContainer() {

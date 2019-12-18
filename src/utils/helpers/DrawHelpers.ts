@@ -83,7 +83,7 @@ export function createSVGContainer(width: number, height: number) {
         .attr('height', height);
 }
 
-export function createZoom(svgContainer: NodeSelection<SVGSVGElement>, selector: ElementIds.ZOOM_OVERVIEW | ElementIds.ZOOM_DETAILS) {
+export function createZoom(svgContainer: NodeSelection<SVGSVGElement>, selector: ElementIds.OVERVIEW_ZOOM | ElementIds.DETAILS_ZOOM) {
     const zoomLayer = svgContainer.append('g').attr('id', selector);
 
     svgContainer
