@@ -1,16 +1,16 @@
 import { NodeSelection, TreeNode } from '../../components/types';
 import {
-    selectById,
     selectDetailsContainerDiv,
     selectDetailsExitButtonWrapper,
+    selectDetailsRootNodeContainer,
     selectDetailsViewContainer,
     selectDetailsZoom,
 } from './Selectors';
-import { ElementColors, FAST_TRANSITION_DURATION, ElementIds, LabelColors, TextColors } from '../AppConsts';
-import { hierarchy, HierarchyPointNode, tree, HierarchyPointLink } from 'd3-hierarchy';
-import { create, linkHorizontal, zoom, zoomIdentity, symbol, symbolCross } from 'd3';
+import { ElementColors, ElementIds, FAST_TRANSITION_DURATION, LabelColors, TextColors } from '../AppConsts';
+import { hierarchy, HierarchyPointLink, HierarchyPointNode, tree } from 'd3-hierarchy';
+import { create, linkHorizontal, symbol, symbolCross, zoom, zoomIdentity } from 'd3';
 import { createLabelPath, createZoom } from './DrawHelpers';
-import { changeZoom, getLabelTextDimensions } from './GraphHelpers';
+import { changeZoom, getTextDimensions } from './GraphHelpers';
 
 export function createDetailsViewContainer(width: number, height: number) {
     const containerWidth = width * 4;
@@ -91,9 +91,9 @@ async function createRootNode(
         .attr('text-anchor', 'middle')
         .attr('fill', TextColors.HIGHLIGHTED)
         .text(rootNodeName);
-    await delayPromise(0);
-    const { height, x, y } = getLabelTextDimensions(text.node()) || { width: 0, height: 0, x: 0, y: 0 };
-    const labelPath = createLabelPath.call(text.node(), isConsumer, isProvider);
+    await delayPromise();
+    const { height, x, y } = getTextDimensions(text.node()) || { height: 0, x: 0, y: 0 };
+    const labelPath = createLabelPath.call(label.node(), isConsumer, isProvider);
     label.attr('d', labelPath).attr('transform', `translate(${x + labelPathWidthOffset}, ${y + labelPathHeightOffset})`);
     // center text vertically on label
     text.attr('y', y + height + 1);
@@ -227,10 +227,8 @@ async function createDiagrams(
 
     await createRootNode(container, width, height, rootNodeName, Boolean(providersDiagram), Boolean(consumersDiagram));
 
-    const detailsRootNodeContainer = selectById(ElementIds.DETAILS_ROOT_NODE_CONTAINER);
-    const detailsRootNodeBBox = detailsRootNodeContainer.node()
-        ? (detailsRootNodeContainer.node() as SVGSVGElement).getBBox()
-        : { width: 0, x: 0 };
+    const detailsRootNodeContainer = selectDetailsRootNodeContainer();
+    const detailsRootNodeBBox = detailsRootNodeContainer.node()?.getBBox() || { width: 0, x: 0 };
 
     const providersDiagramNode = providersDiagram?.node();
     const consumersDiagramNode = consumersDiagram?.node();

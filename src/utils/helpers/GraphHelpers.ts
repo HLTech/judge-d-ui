@@ -17,25 +17,12 @@ import {
     selectHighLightedNodes,
 } from './Selectors';
 
-export function getLabelTextDimensions(node: Node | null) {
-    if (!node) {
-        return;
+export function getTextDimensions(textElement: SVGTextElement | null) {
+    if (textElement) {
+        return select<SVGTextElement, DependencyNode>(textElement)
+            .node()
+            ?.getBBox();
     }
-
-    // TODO write this part better - check when textContent is not empty
-    if (node.textContent !== '') {
-        return select<SVGGElement, DependencyNode>(node as SVGGElement)
-            .node()!
-            .getBBox();
-    }
-
-    const textNode = select<SVGGElement, DependencyNode>((node.previousSibling || node.nextSibling) as SVGGElement).node();
-
-    if (!textNode) {
-        return;
-    }
-
-    return textNode.getBBox();
 }
 
 export function getNodeDimensions(selectedNode: DependencyNode): { width: number; height: number } {
