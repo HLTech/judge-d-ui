@@ -1,4 +1,4 @@
-import { changeZoom, getLabelTextDimensions, getNodeDimensions } from './GraphHelpers';
+import { changeZoom, getTextDimensions, getNodeDimensions } from './GraphHelpers';
 import { DependencyLink, DependencyNode, NodeSelection } from '../../components/types';
 import { forceCenter, forceCollide, forceLink, forceSimulation, forceY } from 'd3-force';
 import { select, Selection } from 'd3-selection';
@@ -144,8 +144,9 @@ export function createLinkPath(this: Element, link: DependencyLink): void {
         .attr('stroke', LabelColors.DEFAULT);
 }
 
-export function createLabelPath(this: Node | null, isConsumer: boolean, isProvider: boolean) {
-    const labelTextDimensions = getLabelTextDimensions(this);
+export function createLabelPath(this: SVGPathElement | null, isConsumer: boolean, isProvider: boolean) {
+    const labelText = (this?.previousSibling || this?.nextSibling) as SVGTextElement | null;
+    const labelTextDimensions = getTextDimensions(labelText);
 
     if (!labelTextDimensions) {
         return '';

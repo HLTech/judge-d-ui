@@ -61,6 +61,10 @@ export function selectTooltip() {
     return selectById<SVGGElement>(ElementIds.TOOLTIP);
 }
 
+export function selectDetailsRootNodeContainer() {
+    return selectById<SVGSVGElement>(ElementIds.DETAILS_ROOT_NODE_CONTAINER);
+}
+
 export function selectById<Type extends BaseType = BaseType, Data = unknown>(selector: ElementIds) {
     return select<Type, Data>(`#${selector}`);
 }
