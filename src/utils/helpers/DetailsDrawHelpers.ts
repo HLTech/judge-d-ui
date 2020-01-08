@@ -92,9 +92,9 @@ async function createRootNode(
         .attr('fill', TextColors.HIGHLIGHTED)
         .text(rootNodeName);
     await delayPromise();
-    const { height, x, y } = getTextDimensions(text.node()) || { height: 0, x: 0, y: 0 };
+    const { height, y } = getTextDimensions(text.node()) || { height: 0, y: 0 };
     const labelPath = createLabelPath.call(label.node(), isConsumer, isProvider);
-    label.attr('d', labelPath).attr('transform', `translate(${x + labelPathWidthOffset}, ${y + labelPathHeightOffset})`);
+    label.attr('d', labelPath).attr('transform', `translate(${labelPathWidthOffset}, ${y + labelPathHeightOffset})`);
     // center text vertically on label
     text.attr('y', y + height + 1);
 }
