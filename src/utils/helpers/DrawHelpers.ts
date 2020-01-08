@@ -202,3 +202,16 @@ export function createDetailsButton(svgContainer: NodeSelection<SVGGElement>) {
         .text('Details');
     return detailsButtonWrapper;
 }
+
+export function createTooltip(svgContainer: NodeSelection<SVGGElement>) {
+    const tooltipElement = svgContainer
+        .append('g')
+        .attr('id', 'tooltip')
+        .style('opacity', 0);
+    tooltipElement
+        .append('rect')
+        .attr('fill', ElementColors.BUTTON)
+        .attr('rx', 5)
+        .attr('ry', 5);
+    tooltipElement.append('text').attr('fill', TextColors.HIGHLIGHTED);
+}

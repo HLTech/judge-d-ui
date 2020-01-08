@@ -61,6 +61,14 @@ export function selectTooltip() {
     return selectById<SVGGElement>(ElementIds.TOOLTIP);
 }
 
+export function selectTooltipBackground() {
+    return selectTooltip().select<SVGRectElement>('rect');
+}
+
+export function selectTooltipText() {
+    return selectTooltip().select<SVGTextElement>('text');
+}
+
 export function selectDetailsRootNodeContainer() {
     return selectById<SVGSVGElement>(ElementIds.DETAILS_ROOT_NODE_CONTAINER);
 }

@@ -18,7 +18,6 @@ import {
     TextColors,
     ZOOM_DECREASE,
     ZOOM_INCREASE,
-    ElementColors,
     FAST_TRANSITION_DURATION,
     TRANSITION_DURATION,
 } from '../AppConsts';
@@ -29,8 +28,9 @@ import {
     selectDetailsButtonWrapper,
     selectDetailsExitButtonWrapper,
     selectHighLightedNodes,
-    selectOverviewZoom,
     selectTooltip,
+    selectTooltipBackground,
+    selectTooltipText,
 } from './Selectors';
 import { initializeDetailsView, shutdownDetailsView } from './DetailsDrawHelpers';
 
@@ -191,21 +191,12 @@ export function subscribeToCloseDetails() {
 const TOOLTIP_PADDING = 10;
 
 export function subscribeToShowTooltipOnNodeHover() {
-    const tooltipElement = selectOverviewZoom()
-        .append('g')
-        .attr('id', 'tooltip')
-        .style('opacity', 0);
-    const tooltipBackground = tooltipElement
-        .append('rect')
-        .attr('fill', ElementColors.BUTTON)
-        .attr('rx', 5)
-        .attr('ry', 5);
-    const tooltipText = tooltipElement.append('text').attr('fill', TextColors.HIGHLIGHTED);
-
     selectAllNodes()
         .on(Subscriptions.SHOW_TOOLTIP, function(node) {
             const { x = 0, y = 0 } = node;
-            tooltipElement
+            const tooltipText = selectTooltipText();
+            const tooltipBackground = selectTooltipBackground();
+            selectTooltip()
                 .transition()
                 .duration(FAST_TRANSITION_DURATION)
                 .style('opacity', 0.9);
@@ -221,15 +212,11 @@ export function subscribeToShowTooltipOnNodeHover() {
                 .attr('height', height + TOOLTIP_PADDING);
         })
         .on(Subscriptions.HIDE_TOOLTIP, function() {
-            tooltipElement
+            selectTooltip()
                 .transition()
                 .duration(TRANSITION_DURATION)
                 .style('opacity', 0);
         });
-}
-
-export function removeTooltipOnNodeHoverSubscription() {
-    selectTooltip().remove();
 }
 
 class LevelStorage {
