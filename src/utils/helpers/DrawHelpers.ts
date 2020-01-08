@@ -42,6 +42,7 @@ export function createTextElements(labelNodesGroup: NodeSelection<SVGGElement>, 
         .append('text')
         .attr('font-size', BASE_FONT_SIZE)
         .attr('fill', TextColors.DEFAULT)
+        .attr('text-anchor', 'middle')
         .text(d => d.name);
 }
 
@@ -114,7 +115,6 @@ export function createLinkPath(this: Element, link: DependencyLink): void {
     const cosinus = Math.cos(angleInRadians);
     const sinus = Math.sin(angleInRadians);
 
-    const offsetXLeft = -50 * cosinus;
     const offsetY = 50 * sinus;
     const offsetYBelow = -offsetY - 5;
 
@@ -123,10 +123,10 @@ export function createLinkPath(this: Element, link: DependencyLink): void {
     const targetLabelWidth = getNodeDimensions(link.target).width;
     link.target.width = targetLabelWidth;
 
-    const sourceNewX = isSourceOnTheLeft ? (sourceLabelWidth + 20) * cosinus : offsetXLeft;
+    const sourceNewX = isSourceOnTheLeft ? (sourceLabelWidth / 2 + 15) * cosinus : (-sourceLabelWidth / 2 - 15) * cosinus;
     const sourceNewY = isSourceBelowTarget ? offsetYBelow : offsetY;
 
-    const targetNewX = isSourceOnTheLeft ? offsetXLeft : (targetLabelWidth + 20) * cosinus;
+    const targetNewX = isSourceOnTheLeft ? (-targetLabelWidth / 2 - 15) * cosinus : (targetLabelWidth / 2 + 15) * cosinus;
     const targetNewY = isSourceBelowTarget ? offsetY : offsetYBelow;
 
     select<Element, DependencyLink>(this)
@@ -155,18 +155,22 @@ export function createLabelPath(this: SVGPathElement | null, isConsumer: boolean
     const labelTextWidth = labelTextDimensions.width;
 
     if (isConsumer && isProvider) {
-        return 'M4.5,35l9.37,14.59L4.5,64.18h' + (labelTextWidth + 45) + 'l9-14.59L' + (labelTextWidth + 49.5) + ',35H4.5z';
+        return `M${-labelTextWidth / 2 + 4.5},35l9.37,14.59L${-labelTextWidth / 2 + 4.5},64.18h${labelTextWidth +
+            45}l9-14.59L${labelTextWidth / 2 + 49.5},35H${-labelTextWidth / 2 + 4.5}z`;
     }
 
     if (isProvider) {
-        return 'M' + (labelTextWidth + 49.5) + ',35H4.5l9.37,14.59L4.5,64.18h' + (labelTextWidth + 45);
+        return `M${labelTextWidth / 2 + 49.5},35H${-labelTextWidth / 2 + 4.5}l9.37,14.59L${-labelTextWidth / 2 +
+            4.5},64.18h${labelTextWidth + 45}`;
     }
 
     if (isConsumer) {
-        return 'M4.5,64.18h' + (labelTextWidth + 45) + 'l9.42-14.59L' + (labelTextWidth + 49.5) + ',35H4.5';
+        return `M${-labelTextWidth / 2 + 4.5},64.18h${labelTextWidth + 45}l9.42-14.59L${labelTextWidth / 2 + 49.5},35H${-labelTextWidth /
+            2 +
+            4.5}`;
     }
 
-    return 'M4.5,64.18h' + (labelTextWidth + 55) + 'L' + (labelTextWidth + 59.5) + ',35H4.5';
+    return `M${-labelTextWidth / 2 + 4.5},64.18h${labelTextWidth + 55}L${labelTextWidth / 2 + 59.5},35H${-labelTextWidth / 2 + 4.5}`;
 }
 
 export function createHighlightBackground(
