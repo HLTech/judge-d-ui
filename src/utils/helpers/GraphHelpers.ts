@@ -4,7 +4,7 @@ import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { BACKGROUND_HIGHLIGHT_OPACITY, BASE_FONT_SIZE, LabelColors, ElementIds, TextColors, TRANSITION_DURATION } from '../AppConsts';
-import { removeTooltipOnNodeHoverSubscription, subscribeToShowTooltipOnNodeHover, ZoomScaleStorage } from './UserEventHelpers';
+import { ZoomScaleStorage } from './UserEventHelpers';
 import {
     selectAllLinks,
     selectAllNodes,
@@ -15,6 +15,7 @@ import {
     selectDetailsButtonWrapper,
     selectHighlightBackground,
     selectHighLightedNodes,
+    selectTooltip,
 } from './Selectors';
 
 export function getTextDimensions(textElement: SVGTextElement | null) {
@@ -331,7 +332,7 @@ export function handleDrag(simulation: Simulation<DependencyNode, DependencyLink
             if (!selectHighLightedNodes().data().length) {
                 dragStarted(node, simulation);
                 isDragStarted = true;
-                removeTooltipOnNodeHoverSubscription();
+                hideTooltip();
             }
         })
         .on('drag', (node: DependencyNode) => {
@@ -342,8 +343,16 @@ export function handleDrag(simulation: Simulation<DependencyNode, DependencyLink
         .on('end', (node: DependencyNode) => {
             dragEnded(node, simulation);
             isDragStarted = false;
-            subscribeToShowTooltipOnNodeHover();
+            showTooltip();
         });
+}
+
+function showTooltip() {
+    selectTooltip().attr('visibility', 'visible');
+}
+
+function hideTooltip() {
+    selectTooltip().attr('visibility', 'hidden');
 }
 
 function dragStarted(node: DependencyNode, simulation: Simulation<DependencyNode, DependencyLink>) {

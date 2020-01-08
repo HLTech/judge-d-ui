@@ -10,6 +10,7 @@ import {
     createSimulation,
     createSVGContainer,
     createTextElements,
+    createTooltip,
     createZoom,
 } from './helpers/DrawHelpers';
 import {
@@ -44,6 +45,7 @@ export const draw = (network: Network, container: HTMLDivElement) => {
     createLabels(labelNodesGroup, nodes);
     createDetailsButton(zoomLayer);
     createDetailsViewContainer(container.clientWidth, container.clientHeight);
+    createTooltip(zoomLayer);
 
     labelNodesGroup.selectAll<SVGGElement, DependencyNode>('g').call(handleDrag(simulation));
 
