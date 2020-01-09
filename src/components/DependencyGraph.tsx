@@ -3,12 +3,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { LoaderComponent } from './LoaderComponent';
 import { DependencyNode, Network, Service } from './types';
 import { createNetworkFromServices, filterConnectedNodes } from '../utils/helpers/MappingHelpers';
-import { EnvironmentSelect } from './EnvironmentSelect';
-import { CheckboxProps, Radio } from 'semantic-ui-react';
+import { Button, CheckboxProps, Icon } from 'semantic-ui-react';
 import { Graph } from './Graph';
 import { getServicesRequest, getEnvironmentsRequest } from '../api/api';
 import 'semantic-ui-css/semantic.css';
 import { css } from 'emotion';
+import { LeftSideDrawer } from './LeftSideDrawer';
 
 export const DependencyGraph: React.FC = () => {
     const [nodes, setNodes] = useState<DependencyNode[]>([]);
@@ -17,6 +17,7 @@ export const DependencyGraph: React.FC = () => {
     const [env, setEnv] = useState<string>('');
     const [environments, setEnvironments] = useState<string[]>([]);
     const [areOnlyConnectedNodesShown, setAreOnlyConnectedNodesShown] = useState<boolean>(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const graphNetwork: Network = useMemo(() => createNetworkFromServices(services), [services]);
     const onlyNodesWithContracts = useMemo(() => filterConnectedNodes(graphNetwork), [graphNetwork]);
@@ -64,15 +65,24 @@ export const DependencyGraph: React.FC = () => {
     return (
         <>
             <div className={optionsCls}>
-                <h1 className={headerCls}>Judge-Dredd UI</h1>
-                {process.env.NODE_ENV === 'development' && (
-                    <Radio onChange={handleViewSwitchChange} toggle checked={areOnlyConnectedNodesShown} />
-                )}
-                <EnvironmentSelect disabled={isPending} options={environments} env={env} onEnvironmentChange={setEnv} />
+                <Button icon onClick={() => setIsMenuOpen(true)}>
+                    <Icon name={'bars'} size={'large'} />
+                </Button>
             </div>
             {isPending && <LoaderComponent />}
 
             <Graph network={{ ...graphNetwork, nodes }} />
+            {isMenuOpen && (
+                <LeftSideDrawer
+                    environmentOptions={environments}
+                    selectedEnvironment={env}
+                    areControlsDisabled={isPending}
+                    onEnvironmentChange={setEnv}
+                    closeMenu={() => setIsMenuOpen(false)}
+                    areOnlyConnectedNodesShown={areOnlyConnectedNodesShown}
+                    handleViewSwitchChange={handleViewSwitchChange}
+                />
+            )}
         </>
     );
 };
@@ -85,8 +95,4 @@ const optionsCls = css({
     flexDirection: 'column',
     justifyContent: 'center',
     zIndex: 5,
-});
-
-const headerCls = css({
-    margin: 0,
 });

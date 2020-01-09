@@ -29,7 +29,7 @@ export const EnvironmentSelect: React.FC<EnvironmentSelectProps> = ({ env, optio
 
     return (
         <div className={dropdownContainerCls}>
-            <span>Please Select Environment</span>
+            <span>Select Environment</span>
 
             <Dropdown
                 className={dropdownCls}
@@ -48,7 +48,6 @@ export const EnvironmentSelect: React.FC<EnvironmentSelectProps> = ({ env, optio
 
 const dropdownContainerCls = css({
     minWidth: 100,
-    width: 200,
 });
 
 const dropdownCls = css({
