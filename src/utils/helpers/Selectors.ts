@@ -1,11 +1,11 @@
 import { select } from 'd3-selection';
-import { LabelColors, ElementIds } from '../AppConsts';
+import { ElementIds, Colors } from '../AppConsts';
 import { DependencyLink, DependencyNode } from '../../components/types';
 import { BaseType } from 'd3-selection';
 
 export function selectHighLightedNodes() {
     return selectAllNodes().filter(function(this: SVGGElement) {
-        return this.firstElementChild ? this.firstElementChild.getAttribute('fill') !== LabelColors.DEFAULT : false;
+        return this.firstElementChild ? this.firstElementChild.getAttribute('fill') !== Colors.LIGHT_GREY : false;
     });
 }
 

@@ -6,7 +6,7 @@ import {
     selectDetailsViewContainer,
     selectDetailsZoom,
 } from './Selectors';
-import { ElementColors, ElementIds, FAST_TRANSITION_DURATION, LabelColors, TextColors } from '../AppConsts';
+import { Colors, ElementIds, FAST_TRANSITION_DURATION } from '../AppConsts';
 import { hierarchy, HierarchyPointLink, HierarchyPointNode, tree } from 'd3-hierarchy';
 import { create, linkHorizontal, symbol, symbolCross, zoom, zoomIdentity } from 'd3';
 import { createLabelPath, createZoom } from './DrawHelpers';
@@ -31,7 +31,7 @@ export function createDetailsViewContainer(width: number, height: number) {
         .append('rect')
         .attr('width', width)
         .attr('height', height)
-        .attr('fill', ElementColors.DETAILS_BACKGROUND);
+        .attr('fill', Colors.WHITE);
     container
         .append('g')
         .attr('id', ElementIds.DETAILS_EXIT_BUTTON)
@@ -40,7 +40,7 @@ export function createDetailsViewContainer(width: number, height: number) {
         .attr('transform', 'translate(5,5)')
         .attr('width', 10)
         .attr('height', 10)
-        .attr('fill', ElementColors.DETAILS_BACKGROUND);
+        .attr('fill', Colors.WHITE);
     selectDetailsExitButtonWrapper()
         .append('path')
         .attr('transform', 'translate(10,10) rotate(45)')
@@ -85,11 +85,11 @@ async function createRootNode(
         // hard-coded magic numbers that translates root node to position of root of the tree graphs
         .attr('viewBox', `-${viewboxWidth / 3.2} -${viexboxHeight / 2} ${viewboxWidth} ${viexboxHeight}`)
         .attr('preserveAspectRatio', 'xMidYMid meet');
-    const label = nodeContainer.append('path').attr('fill', LabelColors.FOCUSED);
+    const label = nodeContainer.append('path').attr('fill', Colors.MILLENNIUM_MINT);
     const text = nodeContainer
         .append('text')
         .attr('text-anchor', 'middle')
-        .attr('fill', TextColors.HIGHLIGHTED)
+        .attr('fill', Colors.WHITE)
         .text(rootNodeName);
     await delayPromise();
     const { height, y } = getTextDimensions(text.node()) || { height: 0, y: 0 };
@@ -165,7 +165,7 @@ function createDiagram(
 
     g.append('g')
         .attr('fill', 'none')
-        .attr('stroke', ElementColors.DETAILS_LINK)
+        .attr('stroke', Colors.LIGHT_GREY)
         .attr('stroke-width', 2)
         .selectAll('path')
         .data(tree.links())

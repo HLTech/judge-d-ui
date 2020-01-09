@@ -11,15 +11,14 @@ import {
     zoomToHighLightedNodes,
 } from './GraphHelpers';
 import {
-    LabelColors,
     MAXIMUM_ZOOM_SCALE,
     MINIMUM_ZOOM_SCALE,
     ElementIds,
-    TextColors,
     ZOOM_DECREASE,
     ZOOM_INCREASE,
     FAST_TRANSITION_DURATION,
     TRANSITION_DURATION,
+    Colors,
 } from '../AppConsts';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import {
@@ -86,11 +85,12 @@ export function subscribeToChangeHighlightRangeOnArrowKey() {
                         return;
                     }
 
-                    let labelColor = LabelColors.DEFAULT;
-                    let textColor = TextColors.DEFAULT;
+                    let labelColor = Colors.LIGHT_GREY;
+                    let textColor = Colors.BASIC_TEXT;
+
                     if (node.level - 1 <= LevelStorage.getLevel()) {
                         labelColor = getHighLightedLabelColor(node);
-                        textColor = TextColors.HIGHLIGHTED;
+                        textColor = Colors.WHITE;
                     }
 
                     select<Element, DependencyNode>(labelElement).attr('fill', labelColor);
@@ -118,8 +118,8 @@ export function subscribeToResetHighlight() {
                     return;
                 }
 
-                select<Element, DependencyNode>(labelElement).attr('fill', LabelColors.DEFAULT);
-                select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
+                select<Element, DependencyNode>(labelElement).attr('fill', Colors.LIGHT_GREY);
+                select<Element, DependencyNode>(textElement).style('fill', Colors.BASIC_TEXT);
             });
 
             hideHighlightBackground();

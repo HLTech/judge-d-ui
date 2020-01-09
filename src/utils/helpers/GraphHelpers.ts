@@ -3,7 +3,7 @@ import { event, select, selectAll, BaseType } from 'd3-selection';
 import { Simulation } from 'd3-force';
 import { drag } from 'd3-drag';
 import { zoom, zoomIdentity } from 'd3-zoom';
-import { BACKGROUND_HIGHLIGHT_OPACITY, BASE_FONT_SIZE, LabelColors, ElementIds, TextColors, TRANSITION_DURATION } from '../AppConsts';
+import { BACKGROUND_HIGHLIGHT_OPACITY, BASE_FONT_SIZE, ElementIds, TRANSITION_DURATION, Colors } from '../AppConsts';
 import { ZoomScaleStorage } from './UserEventHelpers';
 import {
     selectAllLinks,
@@ -64,10 +64,10 @@ export function highlight(clickedNode: DependencyNode) {
 
         if (areNodesDirectlyConnected) {
             select<Element, DependencyNode>(labelElement).attr('fill', getHighLightedLabelColor);
-            select<Element, DependencyNode>(textElement).style('fill', TextColors.HIGHLIGHTED);
+            select<Element, DependencyNode>(textElement).style('fill', Colors.WHITE);
         } else {
-            select<Element, DependencyNode>(labelElement).attr('fill', LabelColors.DEFAULT);
-            select<Element, DependencyNode>(textElement).style('fill', TextColors.DEFAULT);
+            select<Element, DependencyNode>(labelElement).attr('fill', Colors.LIGHT_GREY);
+            select<Element, DependencyNode>(textElement).style('fill', Colors.BASIC_TEXT);
         }
     });
 }
@@ -305,22 +305,14 @@ export function getHighLightedLabelColor(node: DependencyNode) {
     const { isConsumer, isProvider, level } = node;
 
     if (level === 1) {
-        return LabelColors.FOCUSED;
+        return Colors.MILLENNIUM_MINT;
     }
 
-    if (isConsumer && isProvider) {
-        return LabelColors.PROVIDER_CONSUMER;
+    if (isConsumer || isProvider) {
+        return Colors.CLIFTON_NAVY;
     }
 
-    if (isProvider) {
-        return LabelColors.PROVIDER;
-    }
-
-    if (isConsumer) {
-        return LabelColors.CONSUMER;
-    }
-
-    return LabelColors.DEFAULT;
+    return Colors.LIGHT_GREY;
 }
 
 export function handleDrag(simulation: Simulation<DependencyNode, DependencyLink>) {
