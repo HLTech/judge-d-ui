@@ -16,7 +16,7 @@ export const DependencyGraph: React.FC = () => {
     const [services, setServices] = useState<Service[]>([]);
     const [env, setEnv] = useState<string>('');
     const [environments, setEnvironments] = useState<string[]>([]);
-    const [areOnlyConnectedNodesShown, setAreOnlyConnectedNodesShown] = useState<boolean>(false);
+    const [shouldShowAllNodes, setShouldShowAllNodes] = useState<boolean>(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const graphNetwork: Network = useMemo(() => createNetworkFromServices(services), [services]);
@@ -51,16 +51,15 @@ export const DependencyGraph: React.FC = () => {
         }
     }, [env]);
 
-    const handleViewSwitchChange = (e: React.FormEvent<HTMLInputElement>, data: CheckboxProps) =>
-        setAreOnlyConnectedNodesShown(Boolean(data.checked));
+    const onViewSwitchChange = (e: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => setShouldShowAllNodes(Boolean(data.checked));
 
     useEffect(() => {
-        if (areOnlyConnectedNodesShown) {
-            setNodes(onlyNodesWithContracts);
-        } else {
+        if (shouldShowAllNodes) {
             setNodes(graphNetwork.nodes);
+        } else {
+            setNodes(onlyNodesWithContracts);
         }
-    }, [areOnlyConnectedNodesShown, onlyNodesWithContracts, graphNetwork]);
+    }, [shouldShowAllNodes, onlyNodesWithContracts, graphNetwork]);
 
     return (
         <>
@@ -78,9 +77,9 @@ export const DependencyGraph: React.FC = () => {
                     selectedEnvironment={env}
                     areControlsDisabled={isPending}
                     onEnvironmentChange={setEnv}
-                    closeMenu={() => setIsMenuOpen(false)}
-                    areOnlyConnectedNodesShown={areOnlyConnectedNodesShown}
-                    handleViewSwitchChange={handleViewSwitchChange}
+                    onBackgroundClick={() => setIsMenuOpen(false)}
+                    shouldShowAllNodes={shouldShowAllNodes}
+                    onViewSwitchChange={onViewSwitchChange}
                 />
             )}
         </>
@@ -88,11 +87,7 @@ export const DependencyGraph: React.FC = () => {
 };
 
 const optionsCls = css({
-    display: 'flex',
-    position: 'absolute',
-    backgroundColor: '#FFFFFF',
-    padding: '10px 10px 10px 30px',
-    flexDirection: 'column',
-    justifyContent: 'center',
+    position: 'fixed',
+    margin: 20,
     zIndex: 5,
 });
