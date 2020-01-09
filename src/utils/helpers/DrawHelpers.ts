@@ -3,7 +3,7 @@ import { DependencyLink, DependencyNode, NodeSelection } from '../../components/
 import { forceCenter, forceCollide, forceLink, forceSimulation, forceY } from 'd3-force';
 import { select, Selection } from 'd3-selection';
 import { zoom } from 'd3-zoom';
-import { BASE_FONT_SIZE, ElementColors, LabelColors, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, ElementIds, TextColors } from '../AppConsts';
+import { BASE_FONT_SIZE, MAXIMUM_ZOOM_SCALE, MINIMUM_ZOOM_SCALE, ElementIds, Colors } from '../AppConsts';
 import { selectById } from './Selectors';
 
 export function createLinkElements(zoomLayer: NodeSelection<SVGGElement>, links: DependencyLink[]) {
@@ -24,7 +24,7 @@ export function createLabels(labelNodesGroup: NodeSelection<SVGGElement>, nodes:
         .selectAll('g')
         .data(nodes)
         .append<SVGPathElement>('svg:path')
-        .attr('fill', LabelColors.DEFAULT)
+        .attr('fill', Colors.LIGHT_GREY)
         .attr('d', function({ isConsumer, isProvider }) {
             return createLabelPath.call(this, isConsumer, isProvider);
         });
@@ -39,8 +39,8 @@ export function createTextElements(labelNodesGroup: NodeSelection<SVGGElement>, 
         .attr('cursor', 'pointer')
         .append('text')
         .attr('font-size', BASE_FONT_SIZE)
-        .attr('fill', TextColors.DEFAULT)
         .attr('text-anchor', 'middle')
+        .attr('fill', Colors.BASIC_TEXT)
         .text(d => d.name);
 }
 
@@ -57,7 +57,7 @@ export function createMarkers(svgContainer: any): void {
         .attr('orient', 'auto')
         .append('svg:path')
         .attr('d', 'M0,-5L20,0L0,5,q10 -5,0 -10')
-        .attr('fill', '#dcdee0');
+        .attr('fill', Colors.LIGHT_GREY);
 }
 
 export function createSimulation(nodes: DependencyNode[], links: DependencyLink[], width: number, height: number) {
@@ -139,7 +139,7 @@ export function createLinkPath(this: Element, link: DependencyLink): void {
                 ',' +
                 (link.target.y + targetNewY)
         )
-        .attr('stroke', LabelColors.DEFAULT);
+        .attr('stroke', Colors.LIGHT_GREY);
 }
 
 export function createLabelPath(this: SVGPathElement | null, isConsumer: boolean, isProvider: boolean) {
@@ -183,7 +183,7 @@ export function createHighlightBackground(
         .attr('y', 0)
         .attr('rx', 5)
         .attr('ry', 5)
-        .attr('fill', ElementColors.HIGHLIGHT_BACKGROUND)
+        .attr('fill', Colors.BLUE_GREY)
         .style('opacity', 0);
 }
 
@@ -195,12 +195,12 @@ export function createDetailsButton(svgContainer: NodeSelection<SVGGElement>) {
     detailsButtonWrapper
         .append('rect')
         .style('opacity', 0)
-        .attr('fill', ElementColors.BUTTON);
+        .attr('fill', Colors.BLACK);
     detailsButtonWrapper
         .append('text')
         .style('opacity', 0)
         .style('text-anchor', 'middle')
-        .attr('fill', TextColors.HIGHLIGHTED)
+        .attr('fill', Colors.WHITE)
         .text('Details');
     return detailsButtonWrapper;
 }
@@ -212,8 +212,8 @@ export function createTooltip(svgContainer: NodeSelection<SVGGElement>) {
         .style('opacity', 0);
     tooltipElement
         .append('rect')
-        .attr('fill', ElementColors.BUTTON)
+        .attr('fill', Colors.BLACK)
         .attr('rx', 5)
         .attr('ry', 5);
-    tooltipElement.append('text').attr('fill', TextColors.HIGHLIGHTED);
+    tooltipElement.append('text').attr('fill', Colors.WHITE);
 }

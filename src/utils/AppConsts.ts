@@ -27,24 +27,19 @@ export const MAXIMUM_ZOOM_SCALE = 12;
 export const ZOOM_INCREASE = 1.25;
 export const ZOOM_DECREASE = 0.8;
 
-export enum LabelColors {
-    PROVIDER = '#00bfc2',
-    CONSUMER = '#039881',
-    PROVIDER_CONSUMER = '#03939f',
-    DEFAULT = '#dcdee0',
-    FOCUSED = '#4ca3e5',
-}
+export enum Colors {
+    WHITE = '#FFFFFF',
+    LIGHTEST_GREY = '#FCFCFC',
+    LIGHT_GREY = '#E5E5E6',
+    GREY = '#BABEC2',
+    BLACK = '#1D2733',
 
-export enum TextColors {
-    HIGHLIGHTED = '#ffffff',
-    DEFAULT = '#5e6063',
-}
+    BLUE_GREY = '#C0C8D1',
 
-export enum ElementColors {
-    BUTTON = '#858789',
-    HIGHLIGHT_BACKGROUND = '#edeef0',
-    SLIDER = '#babec2',
-    SLIDER_LABEL = '#8b8b8c',
-    DETAILS_BACKGROUND = '#ffffff',
-    DETAILS_LINK = '#0076eb',
+    CLIFTON_NAVY = '#071D49',
+    MILLENNIUM_MINT = '#00C29E',
+    ANCHOR_BLUE = '#0076EB',
+
+    BASIC_TEXT = '#2C2F33BA',
+    LIGHT_TEXT = '#2C2F3380',
 }
