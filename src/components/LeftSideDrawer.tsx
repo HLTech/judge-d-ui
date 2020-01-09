@@ -7,10 +7,10 @@ interface LeftSideDrawerProps {
     selectedEnvironment: string;
     environmentOptions: string[];
     areControlsDisabled: boolean;
-    areOnlyConnectedNodesShown: boolean;
+    shouldShowAllNodes: boolean;
 
-    closeMenu(): void;
-    handleViewSwitchChange(e: React.FormEvent<HTMLInputElement>, data: CheckboxProps): void;
+    onBackgroundClick(): void;
+    onViewSwitchChange(e: React.FormEvent<HTMLInputElement>, data: CheckboxProps): void;
     onEnvironmentChange(env: string): void;
 }
 
@@ -19,12 +19,12 @@ export const LeftSideDrawer: React.FC<LeftSideDrawerProps> = ({
     environmentOptions,
     areControlsDisabled,
     onEnvironmentChange,
-    closeMenu,
-    areOnlyConnectedNodesShown,
-    handleViewSwitchChange,
+    onBackgroundClick,
+    shouldShowAllNodes,
+    onViewSwitchChange,
 }) => (
-    <div className={backgroundCls}>
-        <div className={containerCls}>
+    <div className={containerCls}>
+        <div className={drawerCls}>
             <h1 className={headerCls}>judge-d</h1>
             <p className={descriptionCls}>Contract testing tool for microservices architecture</p>
             <EnvironmentSelect
@@ -34,14 +34,16 @@ export const LeftSideDrawer: React.FC<LeftSideDrawerProps> = ({
                 onEnvironmentChange={onEnvironmentChange}
             />
             {process.env.NODE_ENV === 'development' && (
-                <Radio onChange={handleViewSwitchChange} toggle checked={areOnlyConnectedNodesShown} />
+                <div>
+                    <Radio onChange={onViewSwitchChange} toggle checked={shouldShowAllNodes} label={'Show all nodes'} />
+                </div>
             )}
         </div>
-        <div className={shadowCls} onClick={() => closeMenu()} />
+        <div className={shadowCls} onClick={onBackgroundClick} />
     </div>
 );
 
-const backgroundCls = css({
+const containerCls = css({
     position: 'fixed',
     display: 'grid',
     gridTemplateColumns: '320px 1fr',
@@ -60,9 +62,9 @@ const descriptionCls = css({
     fontSize: 13,
 });
 
-const containerCls = css({
+const drawerCls = css({
     display: 'grid',
-    gridTemplateRows: '60px 60px auto',
+    gridTemplateRows: '60px 60px 80px auto',
     borderTop: '15px solid #E5E5E6',
     backgroundColor: '#ffffff',
     padding: '32px 38px',
