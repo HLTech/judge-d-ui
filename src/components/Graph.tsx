@@ -34,6 +34,7 @@ export const Graph = React.memo<GraphProps>(({ network: { nodes, links, detailsN
 });
 
 const graphContainerCls = css({
+    label: 'graph-container',
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -46,6 +47,7 @@ const graphContainerCls = css({
 });
 
 const graphOverviewCls = css({
+    label: 'graph-overview-container',
     position: 'absolute',
     top: 0,
     left: 0,
@@ -54,5 +56,6 @@ const graphOverviewCls = css({
 });
 
 const graphDetailsCls = css({
+    label: 'graph-details-container',
     zIndex: 6,
 });

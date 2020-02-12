@@ -39,11 +39,12 @@ export const LeftSideDrawer: React.FC<LeftSideDrawerProps> = ({
                 </div>
             )}
         </div>
-        <div className={shadowCls} onClick={onBackgroundClick} />
+        <div className={overlayCls} onClick={onBackgroundClick} />
     </div>
 );
 
 const containerCls = css({
+    label: 'drawer-container',
     position: 'fixed',
     display: 'grid',
     gridTemplateColumns: '320px 1fr',
@@ -55,14 +56,17 @@ const containerCls = css({
 });
 
 const headerCls = css({
+    label: 'drawer-header',
     fontSize: 40,
 });
 
 const descriptionCls = css({
+    label: 'drawer-description',
     fontSize: 13,
 });
 
 const drawerCls = css({
+    label: 'drawer',
     display: 'grid',
     gridTemplateRows: '60px 60px 80px auto',
     borderTop: '15px solid #E5E5E6',
@@ -71,6 +75,7 @@ const drawerCls = css({
     boxShadow: '0px 0px 60px #00000010',
 });
 
-const shadowCls = css({
+const overlayCls = css({
+    label: 'drawer-overlay',
     backgroundColor: '#00000040',
 });
