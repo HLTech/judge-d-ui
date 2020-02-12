@@ -15,7 +15,6 @@ export function createLinkElements(zoomLayer: NodeSelection<SVGGElement>, links:
         .data(links)
         .enter()
         .append<SVGPathElement>('svg:path')
-        .attr('class', 'link')
         .attr('marker-end', 'url(#provider)')
         .style('stroke-width', 1);
 }
@@ -25,7 +24,6 @@ export function createLabels(labelNodesGroup: NodeSelection<SVGGElement>, nodes:
         .selectAll('g')
         .data(nodes)
         .append<SVGPathElement>('svg:path')
-        .attr('class', 'label')
         .attr('fill', LabelColors.DEFAULT)
         .attr('d', function({ isConsumer, isProvider }) {
             return createLabelPath.call(this, isConsumer, isProvider);

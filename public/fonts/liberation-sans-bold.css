@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'LiberationSansBold';
+    src: url('liberation-sans-bold.woff') format('woff'), url('liberation-sans-bold.woff2') format('woff2');
+}
+
+* {
+    font-family: 'LiberationSansBold';
+}
