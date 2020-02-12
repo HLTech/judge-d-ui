@@ -20,9 +20,7 @@ import {
 
 export function getTextDimensions(textElement: SVGTextElement | null) {
     if (textElement) {
-        return select<SVGTextElement, DependencyNode>(textElement)
-            .node()
-            ?.getBBox();
+        return textElement.getBBox();
     }
 }
 
@@ -380,7 +378,6 @@ export const changeZoom = (zoomSelector: ElementIds.OVERVIEW_ZOOM | ElementIds.D
     const { transform } = event;
     const zoomLayer = selectById(zoomSelector);
     zoomLayer.attr('transform', transform);
-    zoomLayer.attr('stroke-width', 1 / transform.k);
     ZoomScaleStorage.setScale(transform.k);
 };
 
