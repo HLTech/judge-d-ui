@@ -47,10 +47,12 @@ export const EnvironmentSelect: React.FC<EnvironmentSelectProps> = ({ env, optio
 };
 
 const dropdownContainerCls = css({
+    label: 'env-select-container',
     minWidth: 100,
 });
 
 const dropdownCls = css({
+    label: 'env-select',
     minWidth: 100,
     display: 'inline-block',
 });

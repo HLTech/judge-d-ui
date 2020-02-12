@@ -63,7 +63,7 @@ export const DependencyGraph: React.FC = () => {
 
     return (
         <>
-            <div className={optionsCls}>
+            <div className={drawerOpenButtonCls}>
                 <Button icon onClick={() => setIsMenuOpen(true)}>
                     <Icon name={'bars'} size={'large'} />
                 </Button>
@@ -86,7 +86,8 @@ export const DependencyGraph: React.FC = () => {
     );
 };
 
-const optionsCls = css({
+const drawerOpenButtonCls = css({
+    label: 'drawer-open-button',
     position: 'fixed',
     margin: 20,
     zIndex: 5,

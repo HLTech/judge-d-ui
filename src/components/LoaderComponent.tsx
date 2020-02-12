@@ -11,6 +11,7 @@ export const LoaderComponent: React.FC = () => {
 };
 
 const loaderCls = css({
+    label: 'loader',
     position: 'fixed',
     top: 75,
     height: '100vh',
