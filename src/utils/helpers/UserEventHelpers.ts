@@ -1,37 +1,34 @@
-import { event, select } from 'd3-selection';
-import { DependencyNode, TreeNode } from '../../components/types';
+import {event, select} from 'd3-selection';
+import {DependencyNode, TreeNode} from '../../components/types';
 import {
-    centerScreenToDimension,
-    changeZoom,
-    findGroupBackgroundDimension,
-    findMaxDependencyLevel,
-    getHighLightedLabelColor,
-    hideHighlightBackground,
-    highlight,
-    zoomToHighLightedNodes,
-} from './GraphHelpers';
-import {
+    Colors,
+    ElementIds,
+    FAST_TRANSITION_DURATION,
     MAXIMUM_ZOOM_SCALE,
     MINIMUM_ZOOM_SCALE,
-    ElementIds,
+    TRANSITION_DURATION,
     ZOOM_DECREASE,
     ZOOM_INCREASE,
-    FAST_TRANSITION_DURATION,
-    TRANSITION_DURATION,
-    Colors,
 } from '../AppConsts';
-import { zoom, zoomIdentity } from 'd3-zoom';
+import {zoom, zoomIdentity} from 'd3-zoom';
 import {
     selectAllNodes,
-    selectOverviewContainer,
     selectDetailsButtonWrapper,
     selectDetailsExitButtonWrapper,
     selectHighLightedNodes,
+    selectOverviewContainer,
     selectTooltip,
     selectTooltipBackground,
     selectTooltipText,
 } from './Selectors';
-import { initializeDetailsView, shutdownDetailsView } from './DetailsDrawHelpers';
+import {initializeDetailsView, shutdownDetailsView} from '../../details/details-container';
+import {
+    hideHighlightBackground,
+    zoomToHighLightedNodes
+} from '../../overview/highlight-background/highlight-background.helpers';
+import {findMaxDependencyLevel, getHighLightedLabelColor} from '../../overview/graph-nodes';
+import {centerScreenToDimension, findGroupBackgroundDimension, highlightNodes} from '../../overview/overview.helpers';
+import {changeZoom} from '../../zoom/zoom';
 
 enum Subscriptions {
     HIGHLIGHT = 'click.highlight',
@@ -48,7 +45,7 @@ export function subscribeToHighlight() {
     selectAllNodes().on(Subscriptions.HIGHLIGHT, (node: DependencyNode) => {
         LevelStorage.reset();
         if (node.links.length) {
-            highlight(node);
+            highlightNodes(node);
             zoomToHighLightedNodes();
         }
         event.stopPropagation();
@@ -87,7 +84,6 @@ export function subscribeToChangeHighlightRangeOnArrowKey() {
 
                     let labelColor = Colors.LIGHT_GREY;
                     let textColor = Colors.BASIC_TEXT;
-
                     if (node.level - 1 <= LevelStorage.getLevel()) {
                         labelColor = getHighLightedLabelColor(node);
                         textColor = Colors.WHITE;

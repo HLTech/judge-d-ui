@@ -1,6 +1,6 @@
 import { DependencyLink, DependencyNode, Network, Service, TreeNode } from '../../components/types';
 import { ServiceDto } from '../../api/api.types';
-import { compareNodes } from './GraphHelpers';
+import { compareNodes } from '../../overview/overview.helpers';
 
 export function mapServiceDtoToService(serviceDto: ServiceDto): Service {
     const service: Service = {

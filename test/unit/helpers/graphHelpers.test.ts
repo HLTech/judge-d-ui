@@ -1,5 +1,5 @@
 import { DependencyNode, RenderedDependencyNode } from '../../../src/components/types';
-import { getRenderedNodes } from '../../../src/utils/helpers/GraphHelpers';
+import { getRenderedNodes } from '../../../src/overview/graph-nodes';
 
 const emptyDependencyNode: DependencyNode = {
     name: '',
