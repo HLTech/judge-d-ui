@@ -41,12 +41,46 @@ Expands highlight by one level of depth
 
 ## Setting up a local demo
 
-In order to run demo, you need to launch demoGenerator.sh script.
-There are 2 directories: environments and contracts.
+### Docker
+
+Judge-d-ui pushes new version of docker image to
+[https://hub.docker.com/r/hltech/judge-d-ui](Docker registry) each time
+a CI build is triggered when on master branch. Executing below commands will
+pull latest version of app's docker image and then run it at port 8081 with backend configured as
+https://judge-d.herokuapp.com:
+
+```
+docker pull hltech/judge-d-ui
+docker run -p 8081:80 -t -d -e BASE_PATH=https://judge-d.herokuapp.com -e PORT=80 hltech/judge-d-ui
+```
+
+You can also build your own image locally. It is available in [./docker/](docker/) directory in this repository
+
+#### Docker-compose
+
+A [./demo/docker-compose.yml](demo/docker-compose.yml) file was created to easily run judge-d, postgres database and judge-d-ui services.
+
+Services are exposed via following ports:
+
+| Service    | Port            |
+| ---------- | --------------- |
+| judge-d    | 8080            |
+| judge-d-ui | 8081            |
+| postgres   | - (not exposed) |
+
+#### Populate backend app with data
+
+In order to populate judge-d service with data, you need to launch [./demo/demoGenerator.sh](demo/demoGenerator.sh) script.
+There are 2 directories inside [./demo](demo/) directory: environments and contracts.
 Firstly, the script updates environments. One file means one new environment. Its name is taken from file name.
 Content of this file represents an environment as Judge-d expects.
 Subsequently, the script updates contracts. One file represents one service. Its name and version is taken from its name:
 <name>\_<version>.json. Content of this file represents a contract as Judge-d expects.
+
+The script takes backend service url as optional first parameter, with `localhost:8080` being a default value (will be used if no args are passed to `demoGenerator.sh` script).
+
+If you want to populate backend app that is deployed on heroku, you have to pass an url as first parameter to it, which is `judge-d.herokuapp.com`.
+Script execution for heroku app would then be `./demoGenerator.sh "judge-d.herokuapp.com"`.
 
 ##### Demo on heroku
 

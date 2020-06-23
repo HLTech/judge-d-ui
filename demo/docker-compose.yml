@@ -1,0 +1,32 @@
+version: '3'
+services:
+    judge-d:
+        container_name: judge-d
+        image: hltech/judge-d
+        ports:
+            - 8080:8080
+        environment:
+            - DB_CONNECTION_STRING=jdbc:postgresql://postgres:5432/judge_d
+            - DB_USERNAME=postgres
+            - DB_PASSWORD=postgres
+            - DB_DRIVER_CLASS=org.postgresql.Driver
+            - PACT_BROKER_URL=http://some-host/
+            - PORT=8080
+        external_links:
+            - postgres
+    postgres:
+        container_name: judge-d-postgres
+        image: postgres:9.5
+        volumes:
+            - /var/lib/postgresql/data
+        environment:
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=judge_d
+    judge-d-ui:
+        container_name: judge-d-ui
+        image: hltech/judge-d-ui
+        ports:
+            - 8081:80
+        environment:
+            - BASE_PATH=http://judge-d:8080
+            - PORT=80
