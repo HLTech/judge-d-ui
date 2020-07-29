@@ -21,6 +21,7 @@ export function createNodes(labelNodesGroup: NodeSelection<SVGGElement>, nodes: 
         .data(nodes)
         .enter()
         .append<SVGGElement>('g')
+        .attr('data-test-id', 'label')
         .attr('cursor', 'pointer')
         .append('text')
         .attr('font-size', BASE_FONT_SIZE)
