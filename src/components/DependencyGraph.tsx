@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { LoaderComponent } from './LoaderComponent';
-import { DependencyNode, Network, Service } from './types';
+import { DependencyNode, Service } from './types';
 import { createNetworkFromServices, filterConnectedNodes } from '../utils/helpers/MappingHelpers';
 import { Button, CheckboxProps, Icon } from 'semantic-ui-react';
 import { Graph } from './Graph';
@@ -19,7 +19,7 @@ export const DependencyGraph: React.FC = () => {
     const [shouldShowAllNodes, setShouldShowAllNodes] = useState<boolean>(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const graphNetwork: Network = useMemo(() => createNetworkFromServices(services), [services]);
+    const graphNetwork = useMemo(() => createNetworkFromServices(services), [services]);
     const onlyNodesWithContracts = useMemo(() => filterConnectedNodes(graphNetwork), [graphNetwork]);
 
     useEffect(() => {
@@ -63,14 +63,13 @@ export const DependencyGraph: React.FC = () => {
 
     return (
         <>
+            <Graph network={{ ...graphNetwork, nodes }} />
+            {isPending && <LoaderComponent />}
             <div className={drawerOpenButtonCls}>
                 <Button icon onClick={() => setIsMenuOpen(true)}>
                     <Icon name={'bars'} size={'large'} />
                 </Button>
             </div>
-            {isPending && <LoaderComponent />}
-
-            <Graph network={{ ...graphNetwork, nodes }} />
             {isMenuOpen && (
                 <LeftSideDrawer
                     environmentOptions={environments}
@@ -89,6 +88,7 @@ export const DependencyGraph: React.FC = () => {
 const drawerOpenButtonCls = css({
     label: 'drawer-open-button',
     position: 'fixed',
-    margin: 20,
-    zIndex: 5,
+    top: 20,
+    left: 20,
+    zIndex: 10,
 });

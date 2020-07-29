@@ -5,10 +5,10 @@ jobs:
     include:
         - stage: Install dependencies
           script: yarn install
-        - stage: Build project
-          script: yarn build
-        - stage: Tests
-          script: yarn test
+        - stage: Build project & Tests
+          script:
+              - yarn build
+              - yarn test
         - stage: build & publish docker image for server
           if: branch = master AND NOT type IN (pull_request)
           script:

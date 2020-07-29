@@ -2,7 +2,9 @@ import axios, { AxiosResponse } from 'axios';
 import { mapServiceDtoToService } from '../utils/helpers/MappingHelpers';
 import { EnvironmentStateDto, ServiceDto } from './api.types';
 
-const axiosWithBaseUrl = axios.create({ baseURL: '/api' });
+export const apiBasePath = '/api';
+
+const axiosWithBaseUrl = axios.create({ baseURL: apiBasePath });
 
 export function getServicesRequest(env: string) {
     return axiosWithBaseUrl
