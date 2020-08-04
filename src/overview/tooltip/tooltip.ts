@@ -1,11 +1,12 @@
 import { NodeSelection } from '../../components/types';
-import {Colors} from '../../utils/AppConsts';
+import { Colors } from '../../utils/AppConsts';
 import { selectTooltip } from '../../utils/helpers/Selectors';
 
 export function createTooltip(svgContainer: NodeSelection<SVGGElement>) {
     const tooltipElement = svgContainer
         .append('g')
         .attr('id', 'tooltip')
+        .attr('data-test-id', 'tooltip')
         .style('opacity', 0);
     tooltipElement
         .append('rect')

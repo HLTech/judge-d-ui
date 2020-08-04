@@ -119,10 +119,10 @@ export function highlightNodes(clickedNode: DependencyNode) {
 
         if (areNodesDirectlyConnected) {
             select<Element, DependencyNode>(labelElement).attr('fill', getHighLightedLabelColor);
-            select<Element, DependencyNode>(textElement).style('fill', Colors.WHITE);
+            select<Element, DependencyNode>(textElement).attr('fill', Colors.WHITE);
         } else {
             select<Element, DependencyNode>(labelElement).attr('fill', Colors.LIGHT_GREY);
-            select<Element, DependencyNode>(textElement).style('fill', Colors.BASIC_TEXT);
+            select<Element, DependencyNode>(textElement).attr('fill', Colors.BASIC_TEXT);
         }
     });
 }

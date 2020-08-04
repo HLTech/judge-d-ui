@@ -8,6 +8,7 @@ export function createHighlightBackground(
     return svgContainer
         .append('rect')
         .attr('id', ElementIds.HIGHLIGHT_BACKGROUND)
+        .attr('data-test-id', 'highlight-background')
         .attr('width', 0)
         .attr('height', 0)
         .attr('x', 0)
