@@ -13,6 +13,7 @@ export function createSimulation(nodes: DependencyNode[], links: DependencyLink[
                 .distance(180)
                 .id((node: DependencyNode) => node.name)
         )
+        .alphaDecay(0.1)
         .force('center', forceCenter(width / 2, height / 2))
         .force('y', forceY(0.5))
         .force('collide', forceCollide(140))

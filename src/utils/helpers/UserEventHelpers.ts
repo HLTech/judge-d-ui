@@ -1,5 +1,5 @@
-import {event, select} from 'd3-selection';
-import {DependencyNode, TreeNode} from '../../components/types';
+import { event, select } from 'd3-selection';
+import { DependencyNode, TreeNode } from '../../components/types';
 import {
     Colors,
     ElementIds,
@@ -10,7 +10,7 @@ import {
     ZOOM_DECREASE,
     ZOOM_INCREASE,
 } from '../AppConsts';
-import {zoom, zoomIdentity} from 'd3-zoom';
+import { zoom, zoomIdentity } from 'd3-zoom';
 import {
     selectAllNodes,
     selectDetailsButtonWrapper,
@@ -21,14 +21,11 @@ import {
     selectTooltipBackground,
     selectTooltipText,
 } from './Selectors';
-import {initializeDetailsView, shutdownDetailsView} from '../../details/details-container';
-import {
-    hideHighlightBackground,
-    zoomToHighLightedNodes
-} from '../../overview/highlight-background/highlight-background.helpers';
-import {findMaxDependencyLevel, getHighLightedLabelColor} from '../../overview/graph-nodes';
-import {centerScreenToDimension, findGroupBackgroundDimension, highlightNodes} from '../../overview/overview.helpers';
-import {changeZoom} from '../../zoom/zoom';
+import { initializeDetailsView, shutdownDetailsView } from '../../details/details-container';
+import { hideHighlightBackground, zoomToHighLightedNodes } from '../../overview/highlight-background/highlight-background.helpers';
+import { findMaxDependencyLevel, getHighLightedLabelColor } from '../../overview/graph-nodes';
+import { centerScreenToDimension, findGroupBackgroundDimension, highlightNodes } from '../../overview/overview.helpers';
+import { changeZoom } from '../../zoom/zoom';
 
 enum Subscriptions {
     HIGHLIGHT = 'click.highlight',
@@ -90,7 +87,7 @@ export function subscribeToChangeHighlightRangeOnArrowKey() {
                     }
 
                     select<Element, DependencyNode>(labelElement).attr('fill', labelColor);
-                    select<Element, DependencyNode>(textElement).style('fill', textColor);
+                    select<Element, DependencyNode>(textElement).attr('fill', textColor);
                 });
 
             zoomToHighLightedNodes();
@@ -115,7 +112,7 @@ export function subscribeToResetHighlight() {
                 }
 
                 select<Element, DependencyNode>(labelElement).attr('fill', Colors.LIGHT_GREY);
-                select<Element, DependencyNode>(textElement).style('fill', Colors.BASIC_TEXT);
+                select<Element, DependencyNode>(textElement).attr('fill', Colors.BASIC_TEXT);
             });
 
             hideHighlightBackground();
