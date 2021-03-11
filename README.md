@@ -44,7 +44,7 @@ Expands highlight by one level of depth
 ### Docker
 
 Judge-d-ui pushes new version of docker image to
-[https://hub.docker.com/r/hltech/judge-d-ui](Docker registry) each time
+[Docker registry](https://hub.docker.com/r/hltech/judge-d-ui) each time
 a CI build is triggered when on master branch. Executing below commands will
 pull latest version of app's docker image and then run it at port 8081 with backend configured as
 https://judge-d.herokuapp.com:
